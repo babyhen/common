@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>com.pawpaw</groupId>
-        <artifactId>pom-basic</artifactId>
+        <artifactId>pawpaw-component-pom-dependency</artifactId>
         <version>1.0.0</version>
     </parent>
 
@@ -27,6 +27,11 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -117,7 +122,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
-
 
 
     </dependencies>
