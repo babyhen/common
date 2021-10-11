@@ -10,7 +10,6 @@ import java.util.Collection;
 public interface IEnumType {
     public  int value();
 
-    public Collection<? extends IEnumType> allValues();
 
 
 }
