@@ -1,8 +1,12 @@
 package com.pawpaw.common.util;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 
 public class DateTimeUtil {
@@ -18,6 +22,15 @@ public class DateTimeUtil {
 
     public static DateTimeFormatter TIME_FORMAT_19 = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss")
             .toFormatter();
+
+    public static DateTimeFormatter TIME_FORMAT_10 = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd")
+            .toFormatter();
+
+
+    public static String format10(Date time) {
+        return format(time, TIME_FORMAT_10);
+    }
+
 
     /**
      * 返回 yyyyMMddHHmmss。例如： 20170412173155
@@ -49,13 +62,24 @@ public class DateTimeUtil {
         return format(time, TIME_FORMAT_8);
     }
 
-    public static Date parse(String str, DateTimeFormatter format) {
-
-        LocalDateTime dt = LocalDateTime.from(format.parse(str));
-        ZonedDateTime zdt = dt.atZone(ZoneOffset.systemDefault());
-        Date d = Date.from(zdt.toInstant());
-        return d;
+    public static Date parse10(String str) {
+        return parseDate(str, TIME_FORMAT_10);
     }
+
+    public static Date parse19(String str) {
+        return parseDateTime(str, TIME_FORMAT_19);
+    }
+
+    public static Date parse14(String str) {
+        return parseDateTime(str, TIME_FORMAT_14);
+    }
+
+
+    public static Date parseDate(String str, DateTimeFormatter format) {
+        LocalDate dt = LocalDate.parse(str, format);
+        return toDate(dt);
+    }
+
 
     public static Date plus(Date time, long millions) {
         long t = time.getTime() + millions;
@@ -92,6 +116,60 @@ public class DateTimeUtil {
         ZoneId zone = ZoneId.systemDefault();
         Instant instant = localDateTime.atZone(zone).toInstant();
         return instant.toEpochMilli();
+    }
+
+    public static LocalDateTime toLocalDateTime(Date time) {
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(time.toInstant(), ZoneId.systemDefault());
+        return localDateTime;
+    }
+
+    public static Date toDate(LocalDateTime localDateTime) {
+        ZonedDateTime zdt = localDateTime.atZone(ZoneOffset.systemDefault());
+        return Date.from(zdt.toInstant());
+    }
+
+    public static Date toDate(LocalDate localDate) {
+        LocalDateTime dt = LocalDateTime.of(localDate, LocalTime.MIN);
+        return toDate(dt);
+    }
+
+    public static Date parseDateTime(String str, DateTimeFormatter format) {
+        LocalDateTime dt = LocalDateTime.from(format.parse(str));
+        return toDate(dt);
+
+    }
+
+
+    public static Date minusYear(Date time, int year) {
+        LocalDateTime localDateTime = toLocalDateTime(time);
+        localDateTime = localDateTime.minusYears(year);
+        return toDate(localDateTime);
+    }
+
+    public static boolean afterOrEqual(Date t1, Date t2) {
+        return t1.after(t2) || t1.equals(t2);
+
+    }
+
+    public static boolean beforeOrEqual(Date t1, Date t2) {
+        return t1.before(t2) || t1.equals(t2);
+
+    }
+
+    public static Date midnightTime(Date time) {
+        LocalDateTime ldt = toLocalDateTime(time);
+        ldt = ldt.truncatedTo(ChronoUnit.DAYS);
+        return toDate(ldt);
+    }
+
+
+    public static Date lastTimeOfDay(Date time) {
+        LocalDateTime ldt = toLocalDateTime(time);
+        ldt = ldt.truncatedTo(ChronoUnit.DAYS);
+        ldt = ldt.plusDays(1);
+        ldt = ldt.minusSeconds(1);
+        return toDate(ldt);
+
     }
 
 }
