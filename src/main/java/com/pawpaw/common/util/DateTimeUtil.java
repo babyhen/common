@@ -11,7 +11,12 @@ import java.util.Date;
 
 public class DateTimeUtil {
 
+
+
     public static DateTimeFormatter TIME_FORMAT_YEAR_MONTH = new DateTimeFormatterBuilder().appendPattern("yyyyMM")
+            .toFormatter();
+
+    public static DateTimeFormatter TIME_FORMAT_NYR = new DateTimeFormatterBuilder().appendPattern("yyyy年MM月dd日")
             .toFormatter();
 
     public static DateTimeFormatter TIME_FORMAT_8 = new DateTimeFormatterBuilder().appendPattern("yyyyMMdd")
