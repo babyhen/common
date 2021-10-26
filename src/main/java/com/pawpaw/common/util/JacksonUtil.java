@@ -2,6 +2,8 @@ package com.pawpaw.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,11 +16,15 @@ public class JacksonUtil {
 
     public JacksonUtil() {
         this.objectMapper = new ObjectMapper();
+        DeserializationConfig config = this.objectMapper.getDeserializationConfig();
+        config = config.without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.setConfig(config);
     }
 
     public JacksonUtil(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
+
 
     /**
      * json转换成指定类型的对象
