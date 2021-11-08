@@ -69,4 +69,13 @@ public class MoneyUtil {
         return chineseMoneySymbol + s;
     }
 
+
+    public static Integer yuan2Cent(Float yuan) {
+        if (yuan == null) {
+            return null;
+        }
+        Float c = yuan * 100;
+        return c.intValue();
+    }
+
 }

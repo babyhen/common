@@ -56,7 +56,9 @@ public class AsyncExecutor {
 
         public void call();
 
-        public void onException(Exception e);
+        default void onException(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 @Slf4j
@@ -19,5 +20,16 @@ public class CollectionUtil {
         int toIndex = source.size() >= tmpToIndex ? tmpToIndex : source.size();
         return source.subList(from, toIndex);
     }
+
+
+    public static <T> T[] toArray(List<T> l, Class<T> tClass) {
+        T[] a = (T[]) Array.newInstance(tClass, l.size());
+        for (int i = 0; i < l.size(); i++) {
+            a[i] = l.get(i);
+        }
+        return a;
+    }
+
+   
 
 }

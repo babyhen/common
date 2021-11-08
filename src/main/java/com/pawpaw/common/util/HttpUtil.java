@@ -1,10 +1,7 @@
 package com.pawpaw.common.util;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -23,10 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class HttpUtil {
@@ -322,6 +316,36 @@ public class HttpUtil {
 
         default void onException(HttpRequestBase httpMethod, Exception e) {
             logger.error("发送http请求失败，{}，{}", e.getMessage());
+        }
+    }
+
+
+    public static class HeaderCallBack implements HttpCallBack {
+
+        private final Map<String, String> headers2Set;
+        private Header[] respHeader;
+
+        public HeaderCallBack(String headerKey, String headerValue) {
+            this.headers2Set = new HashMap<>();
+            this.headers2Set.put(headerKey, headerValue);
+        }
+
+
+        public HeaderCallBack(Map<String, String> headers2Set) {
+            this.headers2Set = headers2Set;
+        }
+
+        @Override
+        public void beforeHttp(HttpClient client, HttpRequestBase httpMethod, HttpEntity reqEntity) throws Exception {
+            for (String hk : headers2Set.keySet()) {
+                httpMethod.setHeader(hk, headers2Set.get(hk));
+            }
+
+        }
+
+        @Override
+        public void afterHttp(HttpClient client, HttpResponse response, String respData) throws Exception {
+            this.respHeader = response.getAllHeaders();
         }
     }
 }

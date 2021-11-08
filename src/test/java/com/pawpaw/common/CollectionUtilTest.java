@@ -18,8 +18,19 @@ public class CollectionUtilTest {
         l.add("b");
         l.add("c");
         l.add("d");
-        List<String> l2 = CollectionUtil.subList(l, 1,0);
+        List<String> l2 = CollectionUtil.subList(l, 1, 0);
         System.out.println(l2);
+    }
+
+    @Test
+    public void toArray() throws JsonProcessingException {
+        List<String> l = new LinkedList<>();
+        l.add("a");
+        l.add("b");
+        l.add("c");
+        l.add("d");
+        String[] a = CollectionUtil.toArray(l, String.class);
+        System.out.println(a[0]);
     }
 
 

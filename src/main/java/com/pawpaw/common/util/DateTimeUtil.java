@@ -12,7 +12,6 @@ import java.util.Date;
 public class DateTimeUtil {
 
 
-
     public static DateTimeFormatter TIME_FORMAT_YEAR_MONTH = new DateTimeFormatterBuilder().appendPattern("yyyyMM")
             .toFormatter();
 
@@ -67,9 +66,14 @@ public class DateTimeUtil {
         return format(time, TIME_FORMAT_8);
     }
 
+    public static Date parse8(String str) {
+        return parseDate(str, TIME_FORMAT_8);
+    }
+
     public static Date parse10(String str) {
         return parseDate(str, TIME_FORMAT_10);
     }
+
 
     public static Date parse19(String str) {
         return parseDateTime(str, TIME_FORMAT_19);
@@ -81,6 +85,7 @@ public class DateTimeUtil {
 
 
     public static Date parseDate(String str, DateTimeFormatter format) {
+        AssertUtil.notBlank(str, "日期时间字符串不能为空");
         LocalDate dt = LocalDate.parse(str, format);
         return toDate(dt);
     }
@@ -106,11 +111,12 @@ public class DateTimeUtil {
     }
 
     /**
-     * 计算两个日期差多少天，与时间无关。计算的是自然日
+     * 计算两个日期差多少天，与时间无关。
+     * The start date is included, but the end date is not.
      */
     public static int dayInterval(Date start, Date end) {
-        LocalDate s = LocalDate.from(start.toInstant());
-        LocalDate e = LocalDate.from(end.toInstant());
+        LocalDate s = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate e = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return Period.between(s, e).getDays();
     }
 
