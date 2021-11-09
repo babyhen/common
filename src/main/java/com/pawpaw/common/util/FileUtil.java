@@ -37,4 +37,43 @@ public class FileUtil {
         }
 
     }
+
+    /**
+     * 获取文件扩展名
+     *
+     * @param file
+     * @return
+     */
+    public static String getExtension(File file) {
+        String name = file.getName();
+        return StringUtils.substringAfterLast(name, ".");
+    }
+
+    /**
+     * 改变文件扩展名
+     *
+     * @param file
+     * @return
+     */
+    public static boolean changeExtension(File file, String newExtension) {
+        if (!file.exists()) {
+            return false;
+        }
+        String fullName = file.getName();
+        String name = StringUtils.substringBeforeLast(fullName, ".");
+        File nf = null;
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            String newFullName = name;
+            if (i != 0) {
+                newFullName += "-" + i;
+            }
+            newFullName += "." + newExtension;
+            nf = new File(file.getParentFile(), newFullName);
+            if (!nf.exists()) {
+                break;
+            }
+        }
+        boolean b = file.renameTo(nf);
+        return b;
+    }
 }
