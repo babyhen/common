@@ -31,7 +31,7 @@ public class ClassUtilTest {
             }
         }
 
-        Method method = M.class.getMethod("h");
+        Method method = M.class.getMethod("oneParam", String.class);
         List<ParamInfo> list = ClassUtil.getParamInfo(method);
         for (ParamInfo pi : list) {
             System.out.println(pi);
@@ -46,11 +46,22 @@ class M {
     public M(int x, String y) {
     }
 
+
+    @Param(value = "oneParam", defaultValue = "222")
+    public M(String oneParam) {
+    }
+
     @Param("a")
     @Param(value = "b", defaultValue = "1111111111")
     public void h() {
 
     }
+
+    @Param(value = "oneParam", defaultValue = "1111111111")
+    public void oneParam(String one) {
+
+    }
+
 }
 
 
