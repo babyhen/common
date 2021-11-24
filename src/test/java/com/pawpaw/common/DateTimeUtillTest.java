@@ -17,8 +17,15 @@ public class DateTimeUtillTest {
 
     @Test
     public void dayInterval() {
-        int period = DateTimeUtil.dayInterval(new Date(), DateTimeUtil.minusDay(new Date(),1));
+        int period = DateTimeUtil.dayInterval(new Date(), DateTimeUtil.minusDay(new Date(), 1));
         System.out.println(period);
+    }
+
+
+    @Test
+    public void ofDate() {
+        Date d = DateTimeUtil.ofDate("2021", "01", "02");
+        System.out.println(d);
     }
 }
 

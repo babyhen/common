@@ -1,13 +1,14 @@
 package com.pawpaw.common.util;
 
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-
+@Slf4j
 public class CollectionConventer {
 
-    public static final Logger logger = LoggerFactory.getLogger(CollectionConventer.class);
 
     public static int[] collection2IntArray(Collection<Integer> coll) {
         if (coll == null) {
@@ -24,6 +25,7 @@ public class CollectionConventer {
         return r;
     }
 
+
     public static List<Integer> collection2IntList(Collection<String> coll) {
 
         List<Integer> r = new LinkedList<Integer>();
@@ -34,7 +36,7 @@ public class CollectionConventer {
             try {
                 r.add(Integer.parseInt(s));
             } catch (NumberFormatException e) {
-                logger.warn("skip this element,not a number:{}", s);
+                log.warn("skip this element,not a number:{}", s);
             }
 
         }

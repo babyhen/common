@@ -91,6 +91,15 @@ public class DateTimeUtil {
     }
 
 
+    public static Date ofDate(String year, String month, String day) {
+        int y = Integer.parseInt(year);
+        int m = Integer.parseInt(month);
+        int d = Integer.parseInt(day);
+        LocalDate localDate = LocalDate.of(y, m, d);
+        return toDate(localDate);
+    }
+
+
     public static Date plus(Date time, long millions) {
         long t = time.getTime() + millions;
         return new Date(t);
