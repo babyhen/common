@@ -1,5 +1,6 @@
 package com.pawpaw.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
@@ -12,6 +13,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -23,16 +25,23 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.Map.Entry;
 
+@Slf4j
 public class HttpUtil {
-    private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
+    public static final String DEFAULT_CHARSET = "UTF-8";
+
 
     /**
      * 设置超时时间
      */
-    private static HttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(RequestConfig.custom()
-            .setConnectTimeout(5000).setConnectionRequestTimeout(5000).setSocketTimeout(5000).build()).build();
+    private static HttpClient client;
 
-    public static final String DEFAULT_CHARSET = "UTF-8";
+    static {
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(5000).setSocketTimeout(5000).build();
+        builder.setDefaultRequestConfig(config);
+        builder.setRetryHandler(new DefaultHttpRequestRetryHandler(3, true));
+        client = builder.build();
+    }
 
     ///////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////
@@ -45,7 +54,7 @@ public class HttpUtil {
     }
 
     public static String postMultipartFormData(String url, byte[] data, HttpCallBack callBack) {
-        logger.debug("http url is {}", url);
+        log.debug("http url is {}", url);
         HttpPost post = new HttpPost(url);
         ByteArrayEntity entity = new ByteArrayEntity(new byte[0]);
         if (data != null) {
@@ -59,14 +68,14 @@ public class HttpUtil {
 
             HttpResponse response = client.execute(post);
             String resp = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
-            logger.debug(resp);
+            log.debug(resp);
             if (callBack != null) {
                 callBack.afterHttp(client, response, resp);
             }
             int status = response.getStatusLine().getStatusCode();
-            logger.debug("http resp status is {}", status);
+            log.debug("http resp status is {}", status);
             if (status != HttpStatus.SC_OK) {
-                logger.warn("http resp status is {}", status);
+                log.warn("http resp status is {}", status);
                 throw new RuntimeException("http请求status异常,status=" + status);
             }
             return resp;
@@ -101,7 +110,7 @@ public class HttpUtil {
      * @throws Exception
      */
     public static String postFormData(String url, Map<String, String> data, HttpCallBack callBack) {
-        logger.debug("http url is {}", url);
+        log.debug("http url is {}", url);
         HttpPost post = new HttpPost(url);
 
         List<NameValuePair> pairs = new LinkedList<>();
@@ -122,14 +131,14 @@ public class HttpUtil {
 
             HttpResponse response = client.execute(post);
             String resp = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
-            logger.debug(resp);
+            log.debug(resp);
             if (callBack != null) {
                 callBack.afterHttp(client, response, resp);
             }
             int status = response.getStatusLine().getStatusCode();
-            logger.debug("http resp status is {}", status);
+            log.debug("http resp status is {}", status);
             if (status != HttpStatus.SC_OK) {
-                logger.warn("http resp status is {}", status);
+                log.warn("http resp status is {}", status);
                 throw new RuntimeException("http请求status异常,status=" + status);
             }
             return resp;
@@ -164,7 +173,7 @@ public class HttpUtil {
      * @throws Exception
      */
     public static String postStringData(String url, String data, HttpCallBack callBack) {
-        logger.debug("http url is {}", url);
+        log.debug("http url is {}", url);
         HttpPost post = new HttpPost(url);
         StringEntity se = new StringEntity(data, DEFAULT_CHARSET);
         post.setEntity(se);
@@ -175,14 +184,14 @@ public class HttpUtil {
 
             HttpResponse response = client.execute(post);
             String resp = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
-            logger.debug(resp);
+            log.debug(resp);
             if (callBack != null) {
                 callBack.afterHttp(client, response, resp);
             }
             int status = response.getStatusLine().getStatusCode();
-            logger.debug("http resp status is {}", status);
+            log.debug("http resp status is {}", status);
             if (status != HttpStatus.SC_OK) {
-                logger.warn("http resp status is {}", status);
+                log.warn("http resp status is {}", status);
                 throw new RuntimeException("http请求status异常,status=" + status);
             }
             return resp;
@@ -219,7 +228,7 @@ public class HttpUtil {
      * @throws Exception
      */
     public static String get(String url, Map<String, String> params, HttpCallBack callBack) {
-        logger.info("http url is {}", url);
+        log.info("http url is {}", url);
         if (params != null) {
             List<NameValuePair> paramItem = new ArrayList<>();
             for (Entry<String, String> entry : params.entrySet()) {
@@ -230,7 +239,7 @@ public class HttpUtil {
                 url += "?";
             }
             url += paramStr;
-            logger.info("processed http url is {}", url);
+            log.info("processed http url is {}", url);
         }
         HttpGet get = new HttpGet(url);
         try {
@@ -239,14 +248,14 @@ public class HttpUtil {
             }
             HttpResponse response = client.execute(get);
             String resp = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
-            logger.info(resp);
+            log.info(resp);
             if (callBack != null) {
                 callBack.afterHttp(client, response, resp);
             }
             int status = response.getStatusLine().getStatusCode();
-            logger.debug("http resp status is {}", status);
+            log.debug("http resp status is {}", status);
             if (status != HttpStatus.SC_OK) {
-                logger.warn("http resp status is {}", status);
+                log.warn("http resp status is {}", status);
                 throw new RuntimeException("http请求status异常,status=" + status);
             }
             return resp;
@@ -275,7 +284,7 @@ public class HttpUtil {
             HttpResponse response = client.execute(post);
 
             int status = response.getStatusLine().getStatusCode();
-            logger.info("http resp status is {}", status);
+            log.info("http resp status is {}", status);
             if (checkStatus) {
                 if (status != HttpStatus.SC_OK) {
                     throw new Exception("http resp code is not SC_OK");
@@ -315,7 +324,7 @@ public class HttpUtil {
         public void afterHttp(HttpClient client, HttpResponse response, String respData) throws Exception;
 
         default void onException(HttpRequestBase httpMethod, Exception e) {
-            logger.error("发送http请求失败，{}，{}", e.getMessage());
+            log.error("发送http请求失败，{}，{}", e.getMessage());
         }
     }
 
