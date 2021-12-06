@@ -31,6 +31,13 @@ public class CollectionUtil {
     }
 
 
+    public static <T> List<T> minus(List<T> source, Collection<T> toMinus) {
+        List<T> copy = new ArrayList<>(source);
+        copy.removeAll(toMinus);
+        return copy;
+    }
+
+
     public static <T> T[] toArray(List<T> l, Class<T> tClass) {
         T[] a = (T[]) Array.newInstance(tClass, l.size());
         for (int i = 0; i < l.size(); i++) {

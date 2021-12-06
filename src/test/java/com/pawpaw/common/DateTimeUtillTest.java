@@ -27,6 +27,26 @@ public class DateTimeUtillTest {
         Date d = DateTimeUtil.ofDate("2021", "01", "02");
         System.out.println(d);
     }
+
+
+    @Test
+    public void truncateTime() {
+        Date d = DateTimeUtil.truncateTime(new Date());
+        System.out.println(d);
+    }
+
+
+    @Test
+    public void truncateSecond() {
+        Date d = DateTimeUtil.truncateSecond(new Date());
+        System.out.println(d);
+    }
+
+    @Test
+    public void plusMinute() {
+        Date d = DateTimeUtil.plusMinute(new Date(), 5);
+        System.out.println(d);
+    }
 }
 
 

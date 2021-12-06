@@ -109,6 +109,10 @@ public class DateTimeUtil {
         return plus(time, day * 24 * 60 * 60 * 1000);
     }
 
+    public static Date plusMinute(Date time, int minute) {
+        return plus(time, minute * 60 * 1000);
+    }
+
     public static Date minus(Date time, long millions) {
         long t = time.getTime() - millions;
         return new Date(t);
@@ -118,6 +122,12 @@ public class DateTimeUtil {
         long mill = day * 24 * 60 * 60 * 1000L;
         return minus(time, mill);
     }
+
+    public static Date minusMinute(Date time, int minute) {
+        long mill = minute * 60 * 1000L;
+        return minus(time, mill);
+    }
+
 
     /**
      * 计算两个日期差多少天，与时间无关。
@@ -190,6 +200,18 @@ public class DateTimeUtil {
         ldt = ldt.minusSeconds(1);
         return toDate(ldt);
 
+    }
+
+    public static Date truncateTime(Date time) {
+        LocalDateTime ldt = toLocalDateTime(time);
+        ldt = ldt.truncatedTo(ChronoUnit.DAYS);
+        return toDate(ldt);
+    }
+
+    public static Date truncateSecond(Date time) {
+        LocalDateTime ldt = toLocalDateTime(time);
+        ldt = ldt.truncatedTo(ChronoUnit.SECONDS);
+        return toDate(ldt);
     }
 
 }

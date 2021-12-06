@@ -3,6 +3,7 @@ package com.pawpaw.common.util;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
+import java.util.Date;
 
 public class AssertUtil {
 
@@ -30,6 +31,35 @@ public class AssertUtil {
             throw new RuntimeException(exceptionMessage);
         }
     }
+
+    /**
+     * 断言，from是不是早于to
+     *
+     * @param from
+     * @param to
+     */
+    public static void before(Date from, Date to, String exceptionMessage) {
+        if (from.before(to)) {
+            return;
+        }
+        throw new RuntimeException(exceptionMessage);
+    }
+
+
+    /**
+     * 断言，from是不是早于to
+     *
+     * @param from
+     * @param to
+     */
+    public static void before(Comparable from, Comparable to, String exceptionMessage) {
+        int r = from.compareTo(to);
+        if (r < 0) {
+            return;
+        }
+        throw new RuntimeException(exceptionMessage);
+    }
+
 
     public static void assertTrue(boolean expression, String exceptionMessage) {
         if (!expression) {
