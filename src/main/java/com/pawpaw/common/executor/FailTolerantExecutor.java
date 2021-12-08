@@ -1,6 +1,7 @@
-package com.pawpaw.common.concurrent;
+package com.pawpaw.common.executor;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.pawpaw.common.executor.call.ReturnableExecutorCall;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Callable;
@@ -25,7 +26,7 @@ public class FailTolerantExecutor {
     }
 
 
-    public <T> T execute(Callable<T> call) {
+    public <T> T execute(ReturnableExecutorCall<T> call) {
         //如果已经到了最大值。则拒绝所有的任务
         boolean reject = this.rejectTask.get();
         if (reject) {
@@ -33,7 +34,8 @@ public class FailTolerantExecutor {
         }
         //
         try {
-            T t = call.call();
+            call.run();
+            T t = call.getReturn();
             this.failTimes.set(0);  //成功，则把连续失败数重置
             return t;
         } catch (Exception e) {

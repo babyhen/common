@@ -22,8 +22,5 @@ public class SpeedLimitExecutor {
         return t;
     }
 
-    public void execute(ExecutorCall call) {
-        this.rateLimiter.acquire();
-        call.run();
-    }
+    
 }

@@ -3,25 +3,15 @@ package com.pawpaw.common.executor.call;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface ExecutorCall extends Runnable {
-
-    void call();
-
+public interface ExecutorCall extends ReturnableExecutorCall {
+    /**
+     * 简单的，不反悔任何值
+     *
+     * @return
+     */
     @Override
-    default void run() {
-        try {
-            long start = System.currentTimeMillis();
-            this.call();
-            long spend = System.currentTimeMillis() - start;
-            Logger log = LoggerFactory.getLogger(this.getClass());
-            log.debug("async task spend time {}", spend);
-        } catch (Exception e) {
-            this.onException(e);
-        }
-    }
-
-    default void onException(Exception e) {
-        throw new RuntimeException(e);
+    default Object getReturn() {
+        return null;
     }
 
 }
