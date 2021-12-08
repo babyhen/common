@@ -29,7 +29,7 @@ public class AsyncExecutor {
     }
 
 
-    public void execute(AsyncCal call) {
+    public void execute(ExecutorCall call) {
 
         this.executor.execute(new Runnable() {
 
@@ -52,13 +52,5 @@ public class AsyncExecutor {
 
     }
 
-    public interface AsyncCal {
-
-        public void call();
-
-        default void onException(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }
