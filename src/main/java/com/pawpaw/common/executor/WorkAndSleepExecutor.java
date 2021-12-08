@@ -1,11 +1,6 @@
-package com.pawpaw.common.concurrent;
+package com.pawpaw.common.executor;
 
-import com.google.common.util.concurrent.RateLimiter;
-import com.pawpaw.common.domain.IEnumType;
-import org.apache.commons.lang3.time.StopWatch;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import com.pawpaw.common.executor.call.ReturnableExecutorCall;
 
 /**
  * 工作一会，然后再休息一会
@@ -27,7 +22,7 @@ public class WorkAndSleepExecutor {
         this.lastWorkStartTimeLocal = new ThreadLocal();
     }
 
-    public <T> T execute(WorkAndSleepCall<T> call) {
+    public <T> T execute(ReturnableExecutorCall<T> call) {
         //如果是刚创建。那么初始化为工作状态
         Long lastWorkStartTime = this.lastWorkStartTimeLocal.get();
         if (lastWorkStartTime == null) {
@@ -40,7 +35,9 @@ public class WorkAndSleepExecutor {
         long curr = System.currentTimeMillis();
         //检查工作时长
         if (curr >= lastWorkStartTime && curr <= workTimeEnd) {   //工作时间段
-            return call.call();
+            call.run();
+            T t = call.getReturn();
+            return t;
         } else if (curr > workTimeEnd && curr < workAndSleepEnd) {  //休息时间段
             long sleepTime = workAndSleepEnd - curr;
             try {
@@ -50,11 +47,15 @@ public class WorkAndSleepExecutor {
             }
             lastWorkStartTime = System.currentTimeMillis();
             this.lastWorkStartTimeLocal.set(lastWorkStartTime);
-            return call.call();
+            call.run();
+            T t = call.getReturn();
+            return t;
         } else {                                    //工作和休息都过了。那么继续下一个轮回
             lastWorkStartTime = System.currentTimeMillis();
             this.lastWorkStartTimeLocal.set(lastWorkStartTime);
-            return call.call();
+            call.run();
+            T t = call.getReturn();
+            return t;
         }
     }
 

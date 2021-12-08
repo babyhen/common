@@ -1,8 +1,9 @@
 package com.pawpaw.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.pawpaw.common.concurrent.WorkAndSleepCall;
-import com.pawpaw.common.concurrent.WorkAndSleepExecutor;
+import com.pawpaw.common.executor.WorkAndSleepExecutor;
+import com.pawpaw.common.executor.call.ReturnableExecutorCall;
+import com.pawpaw.common.test.ITest;
 import com.pawpaw.common.util.DateTimeUtil;
 import org.junit.Test;
 
@@ -12,8 +13,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class WorkAndSleepExecutorlTest {
+public class WorkAndSleepExecutorlTest implements ITest {
+    ReturnableExecutorCall call = new ReturnableExecutorCall<Integer>() {
+        @Override
+        public void call() {
+            doSomeThing(1);
+            System.out.println(Thread.currentThread().getName() + ":" + DateTimeUtil.format19(new Date()));
+        }
 
+        @Override
+        public Integer getReturn() {
+            return 1;
+        }
+    };
 
     @Test
     public void execute() throws JsonProcessingException, InterruptedException {
@@ -24,14 +36,7 @@ public class WorkAndSleepExecutorlTest {
             service.submit(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    Object r = executor.execute(new WorkAndSleepCall<Object>() {
-                        @Override
-                        public Object call() {
-                            System.out.println(Thread.currentThread().getName()+":"+DateTimeUtil.format19(new Date()));
-                            doSomething();
-                            return null;
-                        }
-                    });
+                    Object r = executor.execute(call);
                     return r;
                 }
             });
@@ -40,13 +45,7 @@ public class WorkAndSleepExecutorlTest {
         service.awaitTermination(100, TimeUnit.HOURS);
     }
 
-    public void doSomething() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 }
 
 
