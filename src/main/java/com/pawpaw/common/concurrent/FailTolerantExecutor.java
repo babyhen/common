@@ -41,8 +41,11 @@ public class FailTolerantExecutor {
             log.error("连续第{}次失败，原因:{}", currFail, e.getMessage());
             if (currFail >= this.maxFailTimes) {
                 this.rejectTask.set(true);
+                throw new RuntimeException(e); //只有达到最大次数才会抛出异常。单线程情况下，防止当前线程抛出异常
+            } else {
+                return null;
             }
-            throw new RuntimeException(e);
         }
+
     }
 }
