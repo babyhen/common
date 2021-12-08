@@ -1,12 +1,9 @@
-package com.pawpaw.common.concurrent.call;
+package com.pawpaw.common.executor.call;
 
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Callable;
-
-public interface ExecutorCall<T> extends Runnable {
+public interface ExecutorCall extends Runnable {
 
     void call();
 

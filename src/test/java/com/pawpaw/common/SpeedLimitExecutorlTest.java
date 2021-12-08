@@ -1,9 +1,8 @@
 package com.pawpaw.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.pawpaw.common.concurrent.SpeedLimitCall;
-import com.pawpaw.common.concurrent.SpeedLimitExecutor;
-import com.pawpaw.common.util.BrowserUtil;
+import com.pawpaw.common.executor.SpeedLimitExecutor;
+import com.pawpaw.common.executor.call.ExecutorCall;
 import com.pawpaw.common.util.DateTimeUtil;
 import org.junit.Test;
 
@@ -16,11 +15,10 @@ public class SpeedLimitExecutorlTest {
     public void execute() throws JsonProcessingException {
         SpeedLimitExecutor executor = new SpeedLimitExecutor(5f);
         for (int i = 0; i < 10; i++) {
-            executor.execute(new SpeedLimitCall<Object>() {
+            executor.execute(new ExecutorCall() {
                 @Override
-                public Object call() {
+                public void call() {
                     System.out.println(DateTimeUtil.format19(new Date()));
-                    return null;
                 }
             });
         }

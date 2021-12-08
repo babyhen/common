@@ -1,6 +1,6 @@
-package com.pawpaw.common.concurrent;
+package com.pawpaw.common.executor;
 
-import com.pawpaw.common.concurrent.call.ExecutorCall;
+import com.pawpaw.common.executor.call.ExecutorCall;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;

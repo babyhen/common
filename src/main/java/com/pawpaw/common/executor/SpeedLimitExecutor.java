@@ -1,9 +1,8 @@
-package com.pawpaw.common.concurrent;
+package com.pawpaw.common.executor;
 
 import com.google.common.util.concurrent.RateLimiter;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.pawpaw.common.executor.call.ExecutorCall;
+import com.pawpaw.common.executor.call.ReturnableExecutorCall;
 
 public class SpeedLimitExecutor {
 
@@ -15,10 +14,16 @@ public class SpeedLimitExecutor {
     }
 
 
-    public <T> T execute(SpeedLimitCall<T> call) {
+    public <T> T execute(ReturnableExecutorCall<T> call) {
         //获取令牌，被阻塞住。直到获取令牌
         this.rateLimiter.acquire();
-        T t = call.call();
+        call.run();
+        T t = call.getReturn();
         return t;
+    }
+
+    public void execute(ExecutorCall call) {
+        this.rateLimiter.acquire();
+        call.run();
     }
 }

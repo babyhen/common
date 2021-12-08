@@ -1,8 +1,6 @@
 package com.pawpaw.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.pawpaw.common.concurrent.SpeedLimitCall;
-import com.pawpaw.common.concurrent.SpeedLimitExecutor;
 import com.pawpaw.common.concurrent.WorkAndSleepCall;
 import com.pawpaw.common.concurrent.WorkAndSleepExecutor;
 import com.pawpaw.common.util.DateTimeUtil;
