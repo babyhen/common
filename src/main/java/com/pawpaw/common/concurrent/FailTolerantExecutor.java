@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -15,31 +16,33 @@ public class FailTolerantExecutor {
 
     private final int maxFailTimes;
     private final AtomicInteger failTimes;
+    private final AtomicBoolean rejectTask;
 
     public FailTolerantExecutor(int maxFailTimes) {
         this.maxFailTimes = maxFailTimes;
         this.failTimes = new AtomicInteger(0);
+        this.rejectTask = new AtomicBoolean(false);
     }
 
 
     public <T> T execute(Callable<T> call) {
         //如果已经到了最大值。则拒绝所有的任务
-        int isReached = this.failTimes.get();
-        if (isReached >= this.maxFailTimes) {
+        boolean reject = this.rejectTask.get();
+        if (reject) {
             throw new RuntimeException("reach max fail times " + this.maxFailTimes + ". all tasks commited will be rejected");
         }
+        //
         try {
             T t = call.call();
-            this.failTimes.decrementAndGet(0);
+            this.failTimes.set(0);  //成功，则把连续失败数重置
             return t;
         } catch (Exception e) {
             int currFail = this.failTimes.incrementAndGet();
+            log.error("连续第{}次失败，原因:{}", currFail, e.getMessage());
             if (currFail >= this.maxFailTimes) {
-                throw new RuntimeException(e);
-            } else {
-                log.error("第{}次失败，原因:{}", currFail, e.getMessage());
+                this.rejectTask.set(true);
             }
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }
