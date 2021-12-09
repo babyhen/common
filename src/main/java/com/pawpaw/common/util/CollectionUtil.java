@@ -10,6 +10,13 @@ import java.util.*;
 @Slf4j
 public class CollectionUtil {
 
+    public static <T> T last(List<T> source) {
+        if (source == null || source.isEmpty()) {
+            return null;
+        }
+        return source.get(source.size() - 1);
+    }
+
     public static <T> List<T> subList(List<T> source, int size) {
         return subList(source, 0, size);
     }
