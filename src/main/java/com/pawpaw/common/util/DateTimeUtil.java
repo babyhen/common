@@ -35,6 +35,9 @@ public class DateTimeUtil {
         return format(time, TIME_FORMAT_10);
     }
 
+    public static final long oneMinuteInMill = 60 * 1000L;
+    public static final long oneHourInMill = 60 * oneMinuteInMill;
+    public static final long oneDayInMill = 24 * oneHourInMill;
 
     /**
      * 返回 yyyyMMddHHmmss。例如： 20170412173155
@@ -106,11 +109,11 @@ public class DateTimeUtil {
     }
 
     public static Date plusDay(Date time, int day) {
-        return plus(time, day * 24 * 60 * 60 * 1000);
+        return plus(time, day * oneDayInMill);
     }
 
     public static Date plusMinute(Date time, int minute) {
-        return plus(time, minute * 60 * 1000);
+        return plus(time, minute * oneMinuteInMill);
     }
 
     public static Date minus(Date time, long millions) {
@@ -119,25 +122,37 @@ public class DateTimeUtil {
     }
 
     public static Date minusDay(Date time, int day) {
-        long mill = day * 24 * 60 * 60 * 1000L;
+        long mill = day * oneDayInMill;
         return minus(time, mill);
     }
 
     public static Date minusMinute(Date time, int minute) {
-        long mill = minute * 60 * 1000L;
+        long mill = minute * oneMinuteInMill;
         return minus(time, mill);
     }
 
 
     /**
-     * 计算两个日期差多少天，与时间无关。
-     * The start date is included, but the end date is not.
+     * 计算两个日期之间间隔多少天，忽略时间。只看日期。
      */
     public static int dayInterval(Date start, Date end) {
-        LocalDate s = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate e = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return Period.between(s, e).getDays();
+        return dayInterval(start, end, true);
     }
+
+
+    /**
+     * 计算两个日期之间间隔多少天
+     */
+    public static int dayInterval(Date start, Date end, boolean ignoreTime) {
+        if (ignoreTime) {
+            start = truncateTime(start);
+            end = truncateTime(end);
+        }
+        Long ml = end.getTime() - start.getTime();
+        return (int) (ml / oneDayInMill);
+
+    }
+
 
     /**
      * 根据时间，得到时间戳
