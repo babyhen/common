@@ -2,6 +2,7 @@ package com.pawpaw.common.executor;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.pawpaw.common.executor.call.ExecutorCall;
+import com.pawpaw.common.executor.call.ReturnNullExecutorCall;
 import com.pawpaw.common.executor.call.ReturnableExecutorCall;
 
 public class SpeedLimitExecutor {
@@ -14,6 +15,15 @@ public class SpeedLimitExecutor {
     }
 
 
+    public void execute(ExecutorCall call) {
+        this.execute(new ReturnNullExecutorCall() {
+            @Override
+            public void call() {
+                call.call();
+            }
+        });
+    }
+
     public <T> T execute(ReturnableExecutorCall<T> call) {
         //获取令牌，被阻塞住。直到获取令牌
         this.rateLimiter.acquire();
@@ -22,5 +32,5 @@ public class SpeedLimitExecutor {
         return t;
     }
 
-    
+
 }

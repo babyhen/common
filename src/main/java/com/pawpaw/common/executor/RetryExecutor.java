@@ -1,10 +1,10 @@
 package com.pawpaw.common.executor;
 
+import com.pawpaw.common.executor.call.ExecutorCall;
+import com.pawpaw.common.executor.call.ReturnNullExecutorCall;
 import com.pawpaw.common.executor.call.ReturnableExecutorCall;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.Callable;
 
 /**
  * 重试的执行器
@@ -14,6 +14,19 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class RetryExecutor {
     private final long maxTryTime;
+
+
+    public void execute(ExecutorCall call) {
+        this.execute(new ReturnNullExecutorCall() {
+            @Override
+            public void call() {
+                call.call();
+            }
+        });
+
+
+    }
+
 
     public <T> T execute(ReturnableExecutorCall<T> call) {
 

@@ -1,6 +1,7 @@
 package com.pawpaw.common.executor;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.pawpaw.common.executor.call.ExecutorCall;
 import com.pawpaw.common.executor.call.ReturnableExecutorCall;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,8 +26,10 @@ public class FailTolerantExecutor {
         this.rejectTask = new AtomicBoolean(false);
     }
 
-
-    public <T> T execute(ReturnableExecutorCall<T> call) {
+    /**
+     * @param call 因为支持失败的容错。所以参数使用 没有返回值的ExecutorCall。否则如果带返回值。当失败的时候其实也没啥可返回的
+     */
+    public void execute(ExecutorCall call) {
         //如果已经到了最大值。则拒绝所有的任务
         boolean reject = this.rejectTask.get();
         if (reject) {
@@ -35,17 +38,13 @@ public class FailTolerantExecutor {
         //
         try {
             call.run();
-            T t = call.getReturn();
             this.failTimes.set(0);  //成功，则把连续失败数重置
-            return t;
         } catch (Exception e) {
             int currFail = this.failTimes.incrementAndGet();
             log.error("连续第{}次失败，原因:{}", currFail, e.getMessage());
             if (currFail >= this.maxFailTimes) {
                 this.rejectTask.set(true);
                 throw new RuntimeException(e); //只有达到最大次数才会抛出异常。单线程情况下，防止当前线程抛出异常
-            } else {
-                return null;
             }
         }
 

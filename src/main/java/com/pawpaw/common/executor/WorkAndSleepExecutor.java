@@ -1,5 +1,7 @@
 package com.pawpaw.common.executor;
 
+import com.pawpaw.common.executor.call.ExecutorCall;
+import com.pawpaw.common.executor.call.ReturnNullExecutorCall;
 import com.pawpaw.common.executor.call.ReturnableExecutorCall;
 
 /**
@@ -20,6 +22,16 @@ public class WorkAndSleepExecutor {
         this.workInMillionSecond = workInMillionSecond;
         this.sleepInMillionSecond = sleepInMillionSecond;
         this.lastWorkStartTimeLocal = new ThreadLocal();
+    }
+
+
+    public void execute(ExecutorCall call) {
+        this.execute(new ReturnNullExecutorCall() {
+            @Override
+            public void call() {
+                call.call();
+            }
+        });
     }
 
     public <T> T execute(ReturnableExecutorCall<T> call) {

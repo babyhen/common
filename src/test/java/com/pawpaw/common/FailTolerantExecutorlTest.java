@@ -45,8 +45,8 @@ public class FailTolerantExecutorlTest implements ITest {
                 public void run() {
                     try {
                         doSomeThing(1);
-                        Object o = executor.execute(call);
-                        System.out.println(Thread.currentThread().getName() + ":" + o);
+                        executor.execute(call);
+                        System.out.println(Thread.currentThread().getName());
                     } catch (Exception e) {
                         System.out.println(Thread.currentThread().getName() + ":" + e.getMessage());
                     }
