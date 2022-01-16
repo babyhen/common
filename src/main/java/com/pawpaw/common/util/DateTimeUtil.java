@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class DateTimeUtil {
 
@@ -132,6 +133,12 @@ public class DateTimeUtil {
     }
 
 
+    public static Date at(Date time, int hour, int minute, int second) {
+        LocalDateTime ldt = toLocalDateTime(time);
+        ldt = ldt.truncatedTo(ChronoUnit.DAYS).plusHours(hour).plusMinutes(minute).plusSeconds(second);
+        return toDate(ldt);
+    }
+
     /**
      * 计算两个日期之间间隔多少天，忽略时间。只看日期。
      */
@@ -229,4 +236,7 @@ public class DateTimeUtil {
         return toDate(ldt);
     }
 
+    public static LocalTime toLocalTime(Date time) {
+        return toLocalDateTime(time).toLocalTime();
+    }
 }

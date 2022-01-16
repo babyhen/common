@@ -3,6 +3,7 @@ package com.pawpaw.common;
 import com.pawpaw.common.util.DateTimeUtil;
 import org.junit.Test;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 public class DateTimeUtillTest {
@@ -38,6 +39,12 @@ public class DateTimeUtillTest {
     @Test
     public void plusMinute() {
         Date d = DateTimeUtil.plusMinute(new Date(), 5);
+        System.out.println(d);
+    }
+
+    @Test
+    public void toLocalTime() {
+        LocalTime d = DateTimeUtil.toLocalTime(new Date());
         System.out.println(d);
     }
 }

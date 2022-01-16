@@ -2,6 +2,7 @@ package com.pawpaw.common.meta;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,49 +12,31 @@ import java.util.List;
 public class ClassUtil {
 
     public static <T> List<ParamInfo> getParamInfo(Constructor<T> constructor) {
-        Param[] pArray;
-        Params annotation = constructor.getAnnotation(Params.class);
-        if (annotation == null) {
-            Param p = constructor.getAnnotation(Param.class);
-            if (p == null) {
-                pArray = new Param[0];
-            } else {
-                pArray = new Param[]{p};
-            }
-        } else {
-            pArray = annotation.value();
-        }
+        return getParamInfo(constructor.getParameters());
+    }
+
+    /**
+     * 方法的参数上的注解
+     *
+     * @return
+     */
+    public static List<ParamInfo> getParamInfo(Parameter[] parameters) {
         List<ParamInfo> r = new LinkedList<>();
-        for (Param p : pArray) {
-            String pName = p.value();
-            String dv = p.defaultValue();
-            Class type = p.type();
-            r.add(new ParamInfo(pName, dv, type));
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            Param param = parameter.getAnnotation(Param.class);
+            if (param == null) {
+                continue;
+            }
+            Class<?> type = parameter.getType();
+            ParamInfo t = new ParamInfo(i, param.value(), param.defaultValue(), type, param.desc());
+            r.add(t);
         }
         return r;
     }
 
 
     public static List<ParamInfo> getParamInfo(Method method) {
-        Param[] pArray;
-        Params annotation = method.getAnnotation(Params.class);
-        if (annotation == null) {
-            Param p = method.getAnnotation(Param.class);
-            if (p == null) {
-                pArray = new Param[0];
-            } else {
-                pArray = new Param[]{p};
-            }
-        } else {
-            pArray = annotation.value();
-        }
-        List<ParamInfo> r = new LinkedList<>();
-        for (Param p : pArray) {
-            String pName = p.value();
-            String dv = p.defaultValue();
-            Class type = p.type();
-            r.add(new ParamInfo(pName, dv, type));
-        }
-        return r;
+        return getParamInfo(method.getParameters());
     }
 }

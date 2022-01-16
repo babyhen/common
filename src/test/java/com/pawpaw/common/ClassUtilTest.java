@@ -14,7 +14,7 @@ public class ClassUtilTest {
 
 
     @Test
-    public void getParamInfo() throws JsonProcessingException, InterruptedException, NoSuchMethodException {
+    public void getParamInfo() throws Exception {
         Constructor[] cs = M.class.getConstructors();
         for (Constructor c : cs) {
             List<ParamInfo> list = ClassUtil.getParamInfo(c);
@@ -33,24 +33,21 @@ public class ClassUtilTest {
 
 
 class M {
-    @Param("x")
-    @Param("y")
-    public M(int x, String y) {
+    public M() {
     }
 
-
-    @Param(value = "oneParam", defaultValue = "222")
-    public M(String oneParam) {
+    public M(int x, String y, @Param("z") int z) {
     }
 
-    @Param("a")
-    @Param(value = "b", defaultValue = "1111111111")
+    public M(@Param(value = "oneParam", defaultValue = "222") String oneParam) {
+    }
+
     public void h() {
 
     }
 
-    @Param(value = "oneParam", defaultValue = "1111111111")
-    public void oneParam(String one) {
+
+    public void oneParam(@Param(value = "oneParam", defaultValue = "1111111111") String one) {
 
     }
 
