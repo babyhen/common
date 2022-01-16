@@ -5,6 +5,7 @@ import com.pawpaw.common.util.JsonUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,7 +30,8 @@ public class MetaInfo<T> {
         this.aClass = aClass;
         this.constructor = constructor;
         this.defaultArgValue = this.defaultArgValue();
-        this.paramInfos = ClassUtil.getParamInfo(this.constructor);
+        //不可改变的list。防止被而已篡改里面的元素
+        this.paramInfos = Collections.unmodifiableList(ClassUtil.getParamInfo(this.constructor));
     }
 
 
@@ -80,8 +82,6 @@ public class MetaInfo<T> {
         return r;
     }
 
-    public List<ParamInfo> getConstructArgInfo() {
-        return ClassUtil.getParamInfo(this.constructor);
-    }
+
 }
 
