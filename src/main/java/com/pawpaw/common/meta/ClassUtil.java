@@ -11,6 +11,10 @@ import java.util.List;
  */
 public class ClassUtil {
 
+    public static List<ParamInfo> getParamInfo(Method method) {
+        return getParamInfo(method.getParameters());
+    }
+
     public static <T> List<ParamInfo> getParamInfo(Constructor<T> constructor) {
         return getParamInfo(constructor.getParameters());
     }
@@ -36,7 +40,4 @@ public class ClassUtil {
     }
 
 
-    public static List<ParamInfo> getParamInfo(Method method) {
-        return getParamInfo(method.getParameters());
-    }
 }
