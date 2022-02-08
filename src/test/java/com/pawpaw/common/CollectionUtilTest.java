@@ -27,6 +27,13 @@ public class CollectionUtilTest {
         System.out.println(l2);
     }
 
+    @Test
+    public void subLast() throws JsonProcessingException {
+        List<String> l2 = CollectionUtil.subLast(this.l,2);
+        System.out.println(l2);
+    }
+
+
 
     @Test
     public void subListFrom() {

@@ -2,12 +2,14 @@ package com.pawpaw.common.meta;
 
 import com.google.gson.reflect.TypeToken;
 import com.pawpaw.common.util.JsonUtil;
+import lombok.Getter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -18,8 +20,8 @@ import java.util.stream.Collectors;
 public class MetaInfo<T> {
     public final Class<? extends T> aClass;
     public final Constructor<? extends T> constructor;
-    public final String[] defaultArgValue;
     public final List<ParamInfo> paramInfos;
+    private ConcurrentHashMap extraInfo = new ConcurrentHashMap();
 
     public MetaInfo(Constructor<? extends T> constructor) {
         this(constructor.getDeclaringClass(), constructor);
@@ -29,9 +31,16 @@ public class MetaInfo<T> {
     public MetaInfo(Class<? extends T> aClass, Constructor<? extends T> constructor) {
         this.aClass = aClass;
         this.constructor = constructor;
-        this.defaultArgValue = this.defaultArgValue();
         //不可改变的list。防止被而已篡改里面的元素
         this.paramInfos = Collections.unmodifiableList(ClassUtil.getParamInfo(this.constructor));
+    }
+
+    public void addExtra(Object key, Object value) {
+        this.extraInfo.put(key, value);
+    }
+
+    public Object removeExtra(Object key) {
+        return this.extraInfo.remove(key);
     }
 
 
@@ -72,11 +81,10 @@ public class MetaInfo<T> {
         return r;
     }
 
-    private String[] defaultArgValue() {
-        List<ParamInfo> params = ClassUtil.getParamInfo(constructor);
-        String[] r = new String[params.size()];
-        for (int i = 0; i < params.size(); i++) {
-            ParamInfo pi = params.get(i);
+    public String[] defaultArgValue() {
+        String[] r = new String[this.paramInfos.size()];
+        for (int i = 0; i < this.paramInfos.size(); i++) {
+            ParamInfo pi = this.paramInfos.get(i);
             r[i] = pi.getDefaultValue();
         }
         return r;

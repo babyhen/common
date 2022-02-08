@@ -27,12 +27,28 @@ public class CollectionUtil {
         return subList(source, from, size);
     }
 
+    /**
+     * 截取最后N个元素
+     *
+     * @param source
+     * @param size
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> subLast(List<T> source, int size) {
+        int from = source.size() - size;
+        return subList(source, from, size);
+    }
+
 
     public static <T> List<T> subList(List<T> source, int from, int size) {
         int tmpToIndex = from + size;
         int toIndex = source.size() >= tmpToIndex ? tmpToIndex : source.size();
         if (from >= toIndex) {
             return Collections.emptyList();
+        }
+        if(from<0){
+            from=0;
         }
         return source.subList(from, toIndex);
     }
