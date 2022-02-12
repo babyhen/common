@@ -33,7 +33,8 @@ public class ClassUtil {
                 continue;
             }
             Class<?> type = parameter.getType();
-            ParamInfo t = new ParamInfo(i, param.value(), param.defaultValue(), type, param.desc());
+            Class<? extends IConvertor> convertorClz = param.convertor();
+            ParamInfo t = new ParamInfo(i, param.value(), param.defaultValue(), type, param.desc(), convertorClz);
             r.add(t);
         }
         return r;

@@ -1,16 +1,17 @@
 package com.pawpaw.common.meta;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
+@ToString
 public class ParamInfo {
     //参数的位置，从0开始
-    private int position;
-    private String name;
-    private String defaultValue;
-    private Class type;
-    private String desc;
+    private final int position;
+    private final String name;
+    private final String defaultValue;
+    private final Class type;
+    private final String desc;
+    private final Class<? extends IConvertor> convertorClz;
 
 }

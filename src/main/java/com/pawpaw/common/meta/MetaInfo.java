@@ -3,8 +3,11 @@ package com.pawpaw.common.meta;
 import com.google.gson.reflect.TypeToken;
 import com.pawpaw.common.util.JsonUtil;
 import lombok.Getter;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +61,7 @@ public class MetaInfo<T> {
      */
     public Object[] deserializeconstructArgs(String jsonStr) {
         //实际参数的 参数名-》参数值
-        Map paramValueMap = JsonUtil.json2Object(jsonStr, new TypeToken<Map>() {
+        Map<String, String> paramValueMap = JsonUtil.json2Object(jsonStr, new TypeToken<Map<String, String>>() {
         });
         //参数位置-》参数元数据的映射。
         Map<Integer, ParamInfo> paramInfoMap = paramInfos.stream().collect(Collectors.toMap(e -> e.getPosition(), e -> e));
@@ -74,9 +77,16 @@ public class MetaInfo<T> {
                 r[i] = null;
                 continue;
             }
-            String paramName = pi.getName();
-            Object value = paramValueMap.get(paramName);
-            r[i] = value;
+            try {
+                String paramName = pi.getName();
+                String value = paramValueMap.get(paramName);
+                IConvertor convertor = pi.getConvertorClz().getDeclaredConstructor().newInstance();
+                Object convertedValue = convertor.convert(value);
+                r[i] = convertedValue;
+            } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+
         }
         return r;
     }
