@@ -1,14 +1,11 @@
 package com.pawpaw.common;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pawpaw.common.meta.ClassUtil;
 import com.pawpaw.common.meta.MetaInfo;
 import com.pawpaw.common.meta.Param;
 import com.pawpaw.common.meta.ParamInfo;
-import com.pawpaw.common.meta.convertor.DefaultConvertor;
 import com.pawpaw.common.meta.convertor.IntConvertor;
 import com.pawpaw.common.util.JsonUtil;
-import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -59,7 +56,7 @@ class M {
 
     public M(Integer x,
              String y,
-             @Param(value = "z", convertor = IntConvertor.class) int z) {
+             @Param(value = "z") int z) {
     }
 
     public M(@Param(value = "oneParam", defaultValue = "222") String oneParam) {

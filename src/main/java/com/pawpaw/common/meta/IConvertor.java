@@ -7,7 +7,7 @@ import java.lang.annotation.*;
  */
 public interface IConvertor<R> {
 
-    R convert(String raw);
+    R convert(String raw,Class<R> type);
 
 }
 

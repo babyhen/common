@@ -6,7 +6,7 @@ public final class LongConvertor implements IConvertor<Long> {
 
 
     @Override
-    public Long convert(String raw) {
+    public Long convert(String raw,Class type) {
         return Long.parseLong(raw);
     }
 }

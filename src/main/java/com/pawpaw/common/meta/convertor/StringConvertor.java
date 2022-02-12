@@ -2,11 +2,11 @@ package com.pawpaw.common.meta.convertor;
 
 import com.pawpaw.common.meta.IConvertor;
 
-public final class DefaultConvertor implements IConvertor<String> {
+public final class StringConvertor implements IConvertor<String> {
 
 
     @Override
-    public String convert(String raw) {
+    public String convert(String raw,Class type) {
         if (raw == null) {
             return "";
         }

@@ -1,6 +1,6 @@
 package com.pawpaw.common.meta;
 
-import com.pawpaw.common.meta.convertor.DefaultConvertor;
+import com.pawpaw.common.meta.convertor.AutoConvertor;
 
 import java.lang.annotation.*;
 
@@ -15,6 +15,6 @@ public @interface Param {
 
     String desc() default "";
 
-    Class<? extends IConvertor> convertor() default DefaultConvertor.class;
+    Class<? extends IConvertor> convertor() default AutoConvertor.class;
 }
 

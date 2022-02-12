@@ -79,9 +79,10 @@ public class MetaInfo<T> {
             }
             try {
                 String paramName = pi.getName();
+                Class Type = pi.getType();
                 String value = paramValueMap.get(paramName);
                 IConvertor convertor = pi.getConvertorClz().getDeclaredConstructor().newInstance();
-                Object convertedValue = convertor.convert(value);
+                Object convertedValue = convertor.convert(value, Type);
                 r[i] = convertedValue;
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);

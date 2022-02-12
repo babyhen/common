@@ -6,7 +6,7 @@ public final class IntConvertor implements IConvertor<Integer> {
 
 
     @Override
-    public Integer convert(String raw) {
+    public Integer convert(String raw,Class type) {
         return Integer.parseInt(raw);
     }
 }

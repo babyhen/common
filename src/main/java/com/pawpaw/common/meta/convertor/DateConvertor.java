@@ -9,7 +9,7 @@ public final class DateConvertor implements IConvertor<Date> {
 
 
     @Override
-    public Date convert(String raw) {
+    public Date convert(String raw,Class type) {
         int l = raw.length();
         if (l == 10) {
             return DateTimeUtil.parse10(raw);
