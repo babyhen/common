@@ -17,12 +17,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FailTolerantExecutor {
 
     private final int maxFailTimes;
-    private final AtomicInteger failTimes;
+    private final AtomicInteger currFailTimes;
     private final AtomicBoolean rejectTask;
 
     public FailTolerantExecutor(int maxFailTimes) {
         this.maxFailTimes = maxFailTimes;
-        this.failTimes = new AtomicInteger(0);
+        this.currFailTimes = new AtomicInteger(0);
         this.rejectTask = new AtomicBoolean(false);
     }
 
@@ -33,14 +33,16 @@ public class FailTolerantExecutor {
         //如果已经到了最大值。则拒绝所有的任务
         boolean reject = this.rejectTask.get();
         if (reject) {
+            log.error("达到最大连续失败次数{},拒绝执行新任务", this.maxFailTimes);
             throw new RuntimeException("reach max fail times " + this.maxFailTimes + ". all tasks commited will be rejected");
         }
         //
         try {
             call.run();
-            this.failTimes.set(0);  //成功，则把连续失败数重置
-        } catch (Exception e) {
-            int currFail = this.failTimes.incrementAndGet();
+            this.currFailTimes.set(0);  //成功，则把连续失败数重置
+            log.debug("执行成功，重置失败计数器");
+        } catch (Throwable e) {
+            int currFail = this.currFailTimes.incrementAndGet();
             log.error("连续第{}次失败，原因:{}", currFail, e.getMessage());
             if (currFail >= this.maxFailTimes) {
                 this.rejectTask.set(true);
