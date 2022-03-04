@@ -198,6 +198,12 @@ public class DateTimeUtil {
         return toDate(localDateTime);
     }
 
+    public static Date minusMonth(Date time, int month) {
+        LocalDateTime localDateTime = toLocalDateTime(time);
+        localDateTime = localDateTime.minusMonths(month);
+        return toDate(localDateTime);
+    }
+
     public static boolean afterOrEqual(Date t1, Date t2) {
         return t1.after(t2) || t1.equals(t2);
 
