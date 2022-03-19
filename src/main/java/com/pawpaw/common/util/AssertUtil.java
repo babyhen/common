@@ -26,6 +26,13 @@ public class AssertUtil {
         }
     }
 
+    public static void length(Collection collection, int length, String exceptionMessage) {
+        notNull(collection, "集合不能为空");
+        if (collection.size() != length) {
+            throw new RuntimeException(exceptionMessage);
+        }
+    }
+
     public static void notEmpty(Collection<?> collection, String exceptionMessage) {
         if (collection == null || collection.isEmpty()) {
             throw new RuntimeException(exceptionMessage);

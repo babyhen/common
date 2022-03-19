@@ -11,6 +11,9 @@ public final class AutoConvertor implements IConvertor<Object> {
         if (type == String.class) {
             return new StringConvertor().convert(raw, type);
         }
+        if (type == Boolean.class || type == Boolean.TYPE) {
+            return new BoolConvertor().convert(raw, type);
+        }
         if (type == Date.class) {
             return new DateConvertor().convert(raw, type);
         }
