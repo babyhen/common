@@ -4,6 +4,7 @@ import com.pawpaw.common.util.FileUtil;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 public class FileUtilTest {
 
@@ -21,6 +22,13 @@ public class FileUtilTest {
         File file = new File("C:\\Users\\liujixin\\Desktop\\股票池.sel");
         boolean isSucc = FileUtil.changeExtension(file, "txt");
         System.out.println(isSucc);
+    }
+
+
+    @Test
+    public void prepareFile() throws IOException {
+        File file = new File("F:/a/b/c/1.txt");
+        FileUtil.prepareFile(file);
     }
 
 }

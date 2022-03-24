@@ -1,20 +1,22 @@
 package com.pawpaw.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+@Slf4j
 public class FileUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 
     public static String getJarFilePath() throws URISyntaxException {
         String path = FileUtil.class.getResource("/").getPath();
-        LOGGER.info("resource path {}", path);
+        log.info("resource path {}", path);
         if (StringUtils.contains(path, ".jar")) {
             int i = path.indexOf(".jar");
             path = path.substring(0, i + 4);
@@ -75,5 +77,31 @@ public class FileUtil {
         }
         boolean b = file.renameTo(nf);
         return b;
+    }
+
+    /**
+     * 准备文件
+     * 如果是目录，那么则创建所有层级的目录
+     * 如果是文件，如果没创建，则创建一个新的文件
+     *
+     * @param dest
+     */
+    public static void prepareFile(File dest) throws IOException {
+        if (dest.exists()) {
+            return;
+        }
+        createDir(dest.getParentFile());  //先创建上级目录，否则创建文件会失败
+        boolean isCreateNewFile = dest.createNewFile();
+        if (isCreateNewFile) {
+            log.warn("创建了文件 {}", dest.getAbsolutePath());
+        }
+    }
+
+
+    public static void createDir(File dest) {
+        boolean isCreateNewDir = dest.mkdirs();
+        if (isCreateNewDir) {
+            log.warn("创建了目录{}", dest.getAbsolutePath());
+        }
     }
 }
