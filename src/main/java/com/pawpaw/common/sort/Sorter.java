@@ -29,7 +29,7 @@ public class Sorter {
      *
      * @param list
      */
-    public static void asc(List<? extends ITimeComparable> list) {
+    public static void timeAsc(List<? extends ITimeComparable> list) {
         list.sort(timeAscComparator);
     }
 
@@ -37,7 +37,7 @@ public class Sorter {
      * 时间倒叙
      * @param list
      */
-    public static void desc(List<? extends ITimeComparable> list) {
+    public static void timeDesc(List<? extends ITimeComparable> list) {
         list.sort(timeDescComparator);
     }
 
