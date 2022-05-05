@@ -4,8 +4,7 @@ import com.pawpaw.common.meta.ClassUtil;
 import com.pawpaw.common.meta.MetaInfo;
 import com.pawpaw.common.meta.Param;
 import com.pawpaw.common.meta.ParamInfo;
-import com.pawpaw.common.meta.convertor.IntConvertor;
-import com.pawpaw.common.util.JsonUtil;
+import com.pawpaw.common.json.JsonUtil;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;

@@ -1,10 +1,7 @@
 package com.pawpaw.common.meta;
 
 import com.google.gson.reflect.TypeToken;
-import com.pawpaw.common.util.JsonUtil;
-import lombok.Getter;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.BeanUtilsBean;
+import com.pawpaw.common.json.JsonUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

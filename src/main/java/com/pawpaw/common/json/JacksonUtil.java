@@ -1,4 +1,4 @@
-package com.pawpaw.common.util;
+package com.pawpaw.common.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

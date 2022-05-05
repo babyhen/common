@@ -22,6 +22,21 @@ public class ByteUtil {
     /**
      * 字节转16进制字符串
      *
+     * @param bytes  源
+     * @param offset 起始位置
+     * @param length 长度
+     * @return
+     */
+    public static String byteToHex(byte[] bytes, int offset, int length) {
+        byte[] dest = new byte[length];
+        System.arraycopy(bytes, offset, dest, 0, length);
+        return byteToHex(dest);
+    }
+
+
+    /**
+     * 字节转16进制字符串
+     *
      * @param bytes
      * @return
      */

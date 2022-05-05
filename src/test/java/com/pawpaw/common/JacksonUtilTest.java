@@ -2,16 +2,13 @@ package com.pawpaw.common;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.pawpaw.common.util.JacksonUtil;
-import com.pawpaw.common.util.RestTemplateUtil;
+import com.pawpaw.common.json.JacksonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 public class JacksonUtilTest {
 
