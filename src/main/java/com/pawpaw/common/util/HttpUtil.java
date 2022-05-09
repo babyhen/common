@@ -3,6 +3,7 @@ package com.pawpaw.common.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.*;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -13,6 +14,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -37,9 +39,13 @@ public class HttpUtil {
 
     static {
         HttpClientBuilder builder = HttpClientBuilder.create();
-        RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(5000).setSocketTimeout(5000).build();
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(5000)
+                .setConnectionRequestTimeout(5000).setSocketTimeout(5000).build();
         builder.setDefaultRequestConfig(config);
         builder.setRetryHandler(new DefaultHttpRequestRetryHandler(3, true));
+        //
+        CookieStore cookieStore=new BasicCookieStore();
+        builder.setDefaultCookieStore(cookieStore);
         client = builder.build();
     }
 

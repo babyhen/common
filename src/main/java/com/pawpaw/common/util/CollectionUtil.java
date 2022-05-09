@@ -84,7 +84,7 @@ public class CollectionUtil {
     public static <T> List<List<T>> getContinuous(List<T> source,
                                                   Predicate<? super T> predicate,
                                                   int minContinuousSize) {
-        AssertUtil.assertTrue(minContinuousSize >= 2, "连续的周期数最小值为2");
+        AssertUtil.assertTrue(minContinuousSize >= 1, "连续的周期数最小值为1");
         List<T> copy = new LinkedList<>(source);
         List<List<T>> r = new LinkedList<>();
         List<T> tmp = new LinkedList<>();
