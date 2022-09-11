@@ -2,13 +2,13 @@ package com.pawpaw.common.meta;
 
 import com.google.gson.reflect.TypeToken;
 import com.pawpaw.common.json.JsonUtil;
+import lombok.Getter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -17,22 +17,20 @@ import java.util.stream.Collectors;
  *
  * @param <T>
  */
+@Getter
 public class MetaInfo<T> {
-    public final Class<? extends T> aClass;
-    public final Constructor<? extends T> constructor;
-    public final List<ParamInfo> paramInfos;
-    private ConcurrentHashMap extraInfo = new ConcurrentHashMap();
+    private final Class<? extends T> aClass;
+    private final Constructor<? extends T> constructor;
+    private final List<ParamInfo> paramInfos;
+    private final ConcurrentHashMap extraInfo;
+
 
     public MetaInfo(Constructor<? extends T> constructor) {
-        this(constructor.getDeclaringClass(), constructor);
-    }
-
-
-    public MetaInfo(Class<? extends T> aClass, Constructor<? extends T> constructor) {
-        this.aClass = aClass;
+        this.aClass = constructor.getDeclaringClass();
         this.constructor = constructor;
         //不可改变的list。防止被而已篡改里面的元素
-        this.paramInfos = Collections.unmodifiableList(ClassUtil.getParamInfo(this.constructor));
+        this.paramInfos = Collections.unmodifiableList(this.getParamInfo(this.constructor));
+        this.extraInfo = new ConcurrentHashMap();
     }
 
     public void addExtra(Object key, Object value) {
@@ -98,6 +96,46 @@ public class MetaInfo<T> {
         return r;
     }
 
+
+    /**  ************************  help method   ********************************************/
+    /**  ********************************************************************/
+    /**  ********************************************************************/
+    /**
+     * 方法的参数上的注解
+     *
+     * @return
+     */
+    private List<ParamInfo> getParamInfo(Parameter[] parameters) {
+        List<ParamInfo> r = new LinkedList<>();
+        Set<String> existName = new HashSet<>();
+        for (int position = 0; position < parameters.length; position++) {
+            Parameter parameter = parameters[position];
+            Param param = parameter.getAnnotation(Param.class);
+            if (param == null) {
+                continue;
+            }
+            Class<?> type = parameter.getType();
+            Class<? extends IConvertor> convertorClz = param.convertor();
+            String name = param.value();
+            //检查唯一性
+            if (existName.contains(name)) {
+                throw new MetaException("param \"" + name + "\" already exist!");
+            }
+            existName.add(name);
+            //
+            ParamInfo t = new ParamInfo(position, name, param.defaultValue(), type, param.desc(), convertorClz);
+            r.add(t);
+        }
+        return r;
+    }
+
+    private List<ParamInfo> getParamInfo(Method method) {
+        return this.getParamInfo(method.getParameters());
+    }
+
+    private <T> List<ParamInfo> getParamInfo(Constructor<T> constructor) {
+        return this.getParamInfo(constructor.getParameters());
+    }
 
 }
 
