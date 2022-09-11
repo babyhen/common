@@ -4,6 +4,7 @@ import com.pawpaw.common.meta.MetaInfo;
 import com.pawpaw.common.meta.Param;
 import com.pawpaw.common.meta.ParamInfo;
 import com.pawpaw.common.json.JsonUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -14,13 +15,23 @@ import java.util.List;
 import java.util.Map;
 
 public class MetaInfoTest {
-    @Test
-    public void getParamInfo() throws NoSuchMethodException {
+
+    static MetaInfo mi;
+
+    @BeforeClass
+    public static void init() throws NoSuchMethodException {
         Constructor constructor = Son.class.getConstructor(
                 Father.class,
                 Integer.TYPE,
                 String.class);
-        MetaInfo mi = new MetaInfo<>(constructor);
+        mi = new MetaInfo<>(constructor);
+
+
+    }
+
+
+    @Test
+    public void getParamInfo() throws NoSuchMethodException {
         List<ParamInfo> params = mi.getParamInfos();
         for (ParamInfo pi : params) {
             System.out.println(pi);
@@ -30,13 +41,12 @@ public class MetaInfoTest {
 
     @Test
     public void deserializeconstructArgs() throws Exception {
-        Constructor c = Father.class.getConstructor(Integer.class, String.class, Integer.TYPE);
-        MetaInfo mi = new MetaInfo<>(c);
-        Map<String, Object> pm = new HashMap<>();
-        pm.put("z", 99);
-
-        Object[] realParam = mi.deserializeconstructArgs(JsonUtil.object2Json(pm));
-        for (Object o : realParam) {
+        Father f = new Father(35, "刘继新");
+        Son son = new Son(f, 3, "刘绰");
+        String rawJson = JsonUtil.object2Json(son);
+        System.out.println(rawJson);
+        Object[] allArg = mi.deserializeconstructArgs(rawJson);
+        for (Object o : allArg) {
             System.out.println(o);
         }
     }

@@ -1,9 +1,7 @@
 package com.pawpaw.common.json;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -19,6 +17,7 @@ public class JsonUtil {
     };
 
     private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+    private static JsonParser parser = new JsonParser();
 
     /**
      * json转换成指定类型的对象
@@ -39,7 +38,6 @@ public class JsonUtil {
      * json转换成指定类型的对象
      *
      * @param jsonStr
-     * @param clazz
      * @return
      * @throws Exception
      * @throws IOException
@@ -73,4 +71,19 @@ public class JsonUtil {
         return gson.toJson(obj);
     }
 
+    /**
+     * 指定的字符串，把指定的key反序列化成指定的类型
+     *
+     * @param jsonStr
+     * @param key
+     * @param clz
+     * @return
+     */
+    public static <T> T json2Object(String jsonStr, String key, Class<T> clz) {
+        JsonElement je = parser.parse(jsonStr);
+        JsonObject jo = je.getAsJsonObject();
+        JsonElement target = jo.get(key);
+        T r = gson.fromJson(target, clz);
+        return r;
+    }
 }

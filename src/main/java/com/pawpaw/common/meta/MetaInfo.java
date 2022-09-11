@@ -1,6 +1,5 @@
 package com.pawpaw.common.meta;
 
-import com.google.gson.reflect.TypeToken;
 import com.pawpaw.common.json.JsonUtil;
 import lombok.Getter;
 
@@ -56,8 +55,6 @@ public class MetaInfo<T> {
      */
     public Object[] deserializeconstructArgs(String jsonStr) {
         //实际参数的 参数名-》参数值
-        Map<String, String> paramValueMap = JsonUtil.json2Object(jsonStr, new TypeToken<Map<String, String>>() {
-        });
         //参数位置-》参数元数据的映射。
         Map<Integer, ParamInfo> paramInfoMap = paramInfos.stream().collect(Collectors.toMap(e -> e.getPosition(), e -> e));
         //
@@ -72,17 +69,10 @@ public class MetaInfo<T> {
                 r[i] = null;
                 continue;
             }
-            try {
-                String paramName = pi.getName();
-                Class Type = pi.getType();
-                String value = paramValueMap.get(paramName);
-                IConvertor convertor = pi.getConvertorClz().getDeclaredConstructor().newInstance();
-                Object convertedValue = convertor.convert(value, Type);
-                r[i] = convertedValue;
-            } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-
+            String paramName = pi.getName();
+            Class type = pi.getType();
+            Object value = JsonUtil.json2Object(jsonStr, paramName, type);
+            r[i] = value;
         }
         return r;
     }
@@ -115,7 +105,6 @@ public class MetaInfo<T> {
                 continue;
             }
             Class<?> type = parameter.getType();
-            Class<? extends IConvertor> convertorClz = param.convertor();
             String name = param.value();
             //检查唯一性
             if (existName.contains(name)) {
@@ -123,7 +112,7 @@ public class MetaInfo<T> {
             }
             existName.add(name);
             //
-            ParamInfo t = new ParamInfo(position, name, param.defaultValue(), type, param.desc(), convertorClz);
+            ParamInfo t = new ParamInfo(position, name, param.defaultValue(), type, param.desc());
             r.add(t);
         }
         return r;

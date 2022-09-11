@@ -12,6 +12,4 @@ public class ParamInfo {
     private final String defaultValue;
     private final Class type;
     private final String desc;
-    private final Class<? extends IConvertor> convertorClz;
-
 }
