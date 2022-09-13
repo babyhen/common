@@ -6,7 +6,7 @@ import lombok.*;
  * 基础的数据类型对应的类
  */
 @Getter
-@ToString
+@ToString(callSuper = true)
 public class PrimaryTypeParamInfo extends AbstractParamInfo {
 
     private final String defaultValue;

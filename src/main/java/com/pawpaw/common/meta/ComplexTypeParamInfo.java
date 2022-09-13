@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 复合的数据类型对应的类
  */
 @Getter
-@ToString
+@ToString(callSuper = true)
 public class ComplexTypeParamInfo extends AbstractParamInfo {
 
     private List<AbstractParamInfo> fields;
