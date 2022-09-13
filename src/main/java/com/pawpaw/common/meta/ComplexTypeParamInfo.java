@@ -14,14 +14,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @ToString(callSuper = true)
 public class ComplexTypeParamInfo extends AbstractParamInfo {
 
-    private List<AbstractParamInfo> fields;
+    private List<ComplexTypeFieldInfo> fields;
 
     public ComplexTypeParamInfo(int position, String name, Class type, String desc) {
         super(position, name, type, desc);
         this.fields = new CopyOnWriteArrayList<>();
     }
 
-    public void addField(AbstractParamInfo item) {
-        this.fields.add(item);
+    public void addField(ComplexTypeFieldInfo field) {
+        this.fields.add(field);
     }
 }

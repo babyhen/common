@@ -1,9 +1,12 @@
 package com.pawpaw.common.meta;
 
+import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.pawpaw.common.json.JsonUtil;
+import com.pawpaw.common.util.ClassUtils;
 import lombok.Getter;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -109,7 +112,16 @@ public class MetaInfo<T> {
                 PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(position, name, type, desc, defaultValue);
                 r.add(ptpi);
             } else {
+                ?
                 ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(position, name, type, desc);
+                List<Field> fields = ClassUtils.getDeclaredFields(type);
+                List<Param> fieldParams = fields.stream().map(e -> {
+                    Param p = ClassUtils.getAnnotation(e, Param.class);
+                    return p;
+                }).filter(e -> {
+                    return e != null;
+                }).collect(Collectors.toList());
+                // ctpi.addField();
                 r.add(ctpi);
             }
         }
@@ -135,6 +147,9 @@ public class MetaInfo<T> {
             return true;
         }
         if (clz == Date.class) {
+            return true;
+        }
+        if (clz == Boolean.class || clz == Boolean.TYPE) {
             return true;
         }
         if (clz == Byte.class || clz == Byte.TYPE) {
