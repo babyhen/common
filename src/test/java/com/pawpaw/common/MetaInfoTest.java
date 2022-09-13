@@ -50,10 +50,12 @@ public class MetaInfoTest {
 
 
 class Father {
+    @Param(value = "age", defaultValue = "40")
     private int age;
+    @Param("name")
     private String name;
 
-    public Father(@Param("age") int age, @Param("name") String name) {
+    public Father(int age, String name) {
         this.age = age;
         this.name = name;
     }
