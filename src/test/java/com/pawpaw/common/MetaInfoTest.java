@@ -1,18 +1,14 @@
 package com.pawpaw.common;
 
+import com.pawpaw.common.json.JsonUtil;
+import com.pawpaw.common.meta.AbstractParamInfo;
 import com.pawpaw.common.meta.MetaInfo;
 import com.pawpaw.common.meta.Param;
-import com.pawpaw.common.meta.ParamInfo;
-import com.pawpaw.common.json.JsonUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.security.PrivateKey;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MetaInfoTest {
 
@@ -32,8 +28,8 @@ public class MetaInfoTest {
 
     @Test
     public void getParamInfo() throws NoSuchMethodException {
-        List<ParamInfo> params = mi.getParamInfos();
-        for (ParamInfo pi : params) {
+        List<AbstractParamInfo> params = mi.getParamInfos();
+        for (AbstractParamInfo pi : params) {
             System.out.println(pi);
         }
     }

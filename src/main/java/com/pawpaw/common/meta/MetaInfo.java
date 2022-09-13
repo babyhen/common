@@ -4,7 +4,6 @@ import com.pawpaw.common.json.JsonUtil;
 import lombok.Getter;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 public class MetaInfo<T> {
     private final Class<? extends T> aClass;
     private final Constructor<? extends T> constructor;
-    private final List<ParamInfo> paramInfos;
+    private final List<AbstractParamInfo> paramInfos;
     private final ConcurrentHashMap extraInfo;
 
 
@@ -28,7 +27,7 @@ public class MetaInfo<T> {
         this.aClass = constructor.getDeclaringClass();
         this.constructor = constructor;
         //不可改变的list。防止被而已篡改里面的元素
-        this.paramInfos = Collections.unmodifiableList(this.getParamInfo(this.constructor));
+        this.paramInfos = Collections.unmodifiableList(this.analyseParamInfo(this.constructor));
         this.extraInfo = new ConcurrentHashMap();
     }
 
@@ -56,32 +55,23 @@ public class MetaInfo<T> {
     public Object[] deserializeconstructArgs(String jsonStr) {
         //实际参数的 参数名-》参数值
         //参数位置-》参数元数据的映射。
-        Map<Integer, ParamInfo> paramInfoMap = paramInfos.stream().collect(Collectors.toMap(e -> e.getPosition(), e -> e));
+        Map<Integer, AbstractParamInfo> paramInfoMap = paramInfos.stream().collect(Collectors.toMap(e -> e.getPosition(), e -> e));
         //
         Parameter[] realParam = this.constructor.getParameters();
         Object[] r = new Object[realParam.length];
         //依次遍历，看看参数的位置是否有@Param注解。
         // 如果有。则根据参数名字从提供的json字符串中搜索对应的值
         //如果没有则设置成null
-        for (int i = 0; i < realParam.length; i++) {
-            ParamInfo pi = paramInfoMap.get(i);
+        for (int position = 0; position < realParam.length; position++) {
+            AbstractParamInfo pi = paramInfoMap.get(position);
             if (pi == null) {
-                r[i] = null;
+                r[position] = null;
                 continue;
             }
             String paramName = pi.getName();
             Class type = pi.getType();
             Object value = JsonUtil.json2Object(jsonStr, paramName, type);
-            r[i] = value;
-        }
-        return r;
-    }
-
-    public String[] defaultArgValue() {
-        String[] r = new String[this.paramInfos.size()];
-        for (int i = 0; i < this.paramInfos.size(); i++) {
-            ParamInfo pi = this.paramInfos.get(i);
-            r[i] = pi.getDefaultValue();
+            r[position] = value;
         }
         return r;
     }
@@ -95,36 +85,77 @@ public class MetaInfo<T> {
      *
      * @return
      */
-    private List<ParamInfo> getParamInfo(Parameter[] parameters) {
-        List<ParamInfo> r = new LinkedList<>();
+    private List<AbstractParamInfo> analyseParamInfo(Parameter[] parameters) {
+        List<AbstractParamInfo> r = new LinkedList<>();
         Set<String> existName = new HashSet<>();
         for (int position = 0; position < parameters.length; position++) {
             Parameter parameter = parameters[position];
             Param param = parameter.getAnnotation(Param.class);
+            //没有注解，则直接下一个参数
             if (param == null) {
                 continue;
             }
-            Class<?> type = parameter.getType();
             String name = param.value();
-            //检查唯一性
+            //检查参数名唯一性
             if (existName.contains(name)) {
                 throw new MetaException("param \"" + name + "\" already exist!");
             }
             existName.add(name);
-            //
-            ParamInfo t = new ParamInfo(position, name, param.defaultValue(), type, param.desc());
-            r.add(t);
+            //构造对应的对象，并加入到返回的列表里面
+            Class<?> type = parameter.getType();
+            String defaultValue = param.defaultValue();
+            String desc = param.desc();
+            if (isPrimaryType(type)) {
+                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(position, name, type, desc, defaultValue);
+                r.add(ptpi);
+            } else {
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(position, name, type, desc);
+                r.add(ctpi);
+            }
         }
         return r;
     }
 
-    private List<ParamInfo> getParamInfo(Method method) {
-        return this.getParamInfo(method.getParameters());
+    private List<AbstractParamInfo> analyseParamInfo(Method method) {
+        return this.analyseParamInfo(method.getParameters());
     }
 
-    private <T> List<ParamInfo> getParamInfo(Constructor<T> constructor) {
-        return this.getParamInfo(constructor.getParameters());
+    private <T> List<AbstractParamInfo> analyseParamInfo(Constructor<T> constructor) {
+        return this.analyseParamInfo(constructor.getParameters());
     }
 
+    /**
+     * 是否是基础类型
+     *
+     * @param clz
+     * @return
+     */
+    private boolean isPrimaryType(Class clz) {
+        if (clz == String.class) {
+            return true;
+        }
+        if (clz == Date.class) {
+            return true;
+        }
+        if (clz == Byte.class || clz == Byte.TYPE) {
+            return true;
+        }
+        if (clz == Short.class || clz == Short.TYPE) {
+            return true;
+        }
+        if (clz == Integer.class || clz == Integer.TYPE) {
+            return true;
+        }
+        if (clz == Long.class || clz == Long.TYPE) {
+            return true;
+        }
+        if (clz == Float.class || clz == Float.TYPE) {
+            return true;
+        }
+        if (clz == Double.class || clz == Double.TYPE) {
+            return true;
+        }
+        return false;
+    }
 }
 
