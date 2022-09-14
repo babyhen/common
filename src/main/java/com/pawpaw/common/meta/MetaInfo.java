@@ -112,20 +112,33 @@ public class MetaInfo<T> {
                 PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(position, name, type, desc, defaultValue);
                 r.add(ptpi);
             } else {
-                ?
                 ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(position, name, type, desc);
-                List<Field> fields = ClassUtils.getDeclaredFields(type);
-                List<Param> fieldParams = fields.stream().map(e -> {
-                    Param p = ClassUtils.getAnnotation(e, Param.class);
-                    return p;
-                }).filter(e -> {
-                    return e != null;
-                }).collect(Collectors.toList());
-                // ctpi.addField();
+                this.analyseField(ctpi);
                 r.add(ctpi);
             }
         }
         return r;
+    }
+
+    public void analyseField(ComplexTypeParamInfo parent) {
+        Class clz = parent.getType();
+        List<Field> fields = ClassUtils.getDeclaredFields(clz);
+        for (Field f : fields) {
+            Param param = ClassUtils.getAnnotation(f, Param.class);
+            if (param == null) {
+                continue;
+            }
+            Class fieldClz = f.getType();
+            String name = param.value();
+            String desc = param.desc();
+            String defaultValue = param.defaultValue();
+            //如果字段是基础类型
+            if (isPrimaryType(fieldClz)) {
+                ComplexTypeFieldInfo fieldInfo = new ComplexTypeFieldInfo(name, fieldClz, desc, defaultValue);
+            }
+        }
+
+
     }
 
     private List<AbstractParamInfo> analyseParamInfo(Method method) {
