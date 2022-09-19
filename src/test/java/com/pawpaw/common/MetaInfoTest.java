@@ -50,12 +50,35 @@ public class MetaInfoTest {
 }
 
 
+
+class Grandpa {
+    @Param(value = "age")
+    @DefaultValue("80")
+    private int age;
+
+    @DefaultValue("刘德旺")
+    @Param("name")
+    private String name;
+
+    public Grandpa(int age, String name) {
+        this.age = age;
+        this.name = name;
+    }
+
+
+}
+
+
+
 class Father {
     @Param(value = "age")
     @DefaultValue("40")
     private int age;
     @Param("name")
     private String name;
+
+    @Param("grandpa")
+    private  Grandpa grandpa;
 
     public Father(int age, String name) {
         this.age = age;
