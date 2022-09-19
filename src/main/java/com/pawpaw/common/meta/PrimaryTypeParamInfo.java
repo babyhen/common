@@ -7,12 +7,12 @@ import lombok.*;
  */
 @Getter
 @ToString(callSuper = true)
-public class PrimaryTypeParamInfo extends AbstractParamInfo {
+public class PrimaryTypeParamInfo extends ParamInfo {
 
     private final String defaultValue;
 
     public PrimaryTypeParamInfo(int position, String name, Class type, String desc, String defaultValue) {
-        super(position, name, type, desc);
+        super(name, type, desc);
         this.defaultValue = defaultValue;
     }
 }

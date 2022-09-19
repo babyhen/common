@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
 public class MetaInfo<T> {
     private final Class<? extends T> aClass;
     private final Constructor<? extends T> constructor;
-    private final List<AbstractParamInfo> paramInfos;
+    //key：参数在方法的位置， value：参数的信息
+    private final Map<Integer, ParamInfo> paramInfoMap;
     private final ConcurrentHashMap extraInfo;
 
 
@@ -30,7 +31,7 @@ public class MetaInfo<T> {
         this.aClass = constructor.getDeclaringClass();
         this.constructor = constructor;
         //不可改变的list。防止被而已篡改里面的元素
-        this.paramInfos = Collections.unmodifiableList(this.analyseParamInfo(this.constructor));
+        this.paramInfoMap = Collections.unmodifiableMap(this.analyseParamInfo(this.constructor));
         this.extraInfo = new ConcurrentHashMap();
     }
 
@@ -88,7 +89,7 @@ public class MetaInfo<T> {
      *
      * @return
      */
-    private List<AbstractParamInfo> analyseParamInfo(Parameter[] parameters) {
+    private Map<Integer, ParamInfo> analyseParamInfo(Parameter[] parameters) {
         List<AbstractParamInfo> r = new LinkedList<>();
         Set<String> existName = new HashSet<>();
         for (int position = 0; position < parameters.length; position++) {
@@ -141,11 +142,11 @@ public class MetaInfo<T> {
 
     }
 
-    private List<AbstractParamInfo> analyseParamInfo(Method method) {
+    private Map<Integer, ParamInfo> analyseParamInfo(Method method) {
         return this.analyseParamInfo(method.getParameters());
     }
 
-    private <T> List<AbstractParamInfo> analyseParamInfo(Constructor<T> constructor) {
+    private <T> Map<Integer, ParamInfo> analyseParamInfo(Constructor<T> constructor) {
         return this.analyseParamInfo(constructor.getParameters());
     }
 
