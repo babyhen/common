@@ -38,7 +38,7 @@ public class MetaInfoTest {
 
     @Test
     public void deserializeconstructArgs() throws Exception {
-        Father f = new Father(35, "刘继新");
+        Father f = new Father(34, "刘继新");
         Son son = new Son(f, 3, "刘绰");
         String rawJson = JsonUtil.object2Json(son);
         System.out.println(rawJson);
