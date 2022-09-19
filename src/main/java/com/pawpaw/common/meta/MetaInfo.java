@@ -57,17 +57,13 @@ public class MetaInfo<T> {
      * @return
      */
     public Object[] deserializeconstructArgs(String jsonStr) {
-        //实际参数的 参数名-》参数值
-        //参数位置-》参数元数据的映射。
-        Map<Integer, AbstractParamInfo> paramInfoMap = paramInfos.stream().collect(Collectors.toMap(e -> e.getPosition(), e -> e));
-        //
         Parameter[] realParam = this.constructor.getParameters();
         Object[] r = new Object[realParam.length];
         //依次遍历，看看参数的位置是否有@Param注解。
         // 如果有。则根据参数名字从提供的json字符串中搜索对应的值
         //如果没有则设置成null
         for (int position = 0; position < realParam.length; position++) {
-            AbstractParamInfo pi = paramInfoMap.get(position);
+            ParamInfo pi = this.paramInfoMap.get(position);
             if (pi == null) {
                 r[position] = null;
                 continue;
@@ -90,7 +86,7 @@ public class MetaInfo<T> {
      * @return
      */
     private Map<Integer, ParamInfo> analyseParamInfo(Parameter[] parameters) {
-        List<AbstractParamInfo> r = new LinkedList<>();
+        Map<Integer, ParamInfo> r = new HashMap<>();
         Set<String> existName = new HashSet<>();
         for (int position = 0; position < parameters.length; position++) {
             Parameter parameter = parameters[position];
@@ -107,35 +103,55 @@ public class MetaInfo<T> {
             existName.add(name);
             //构造对应的对象，并加入到返回的列表里面
             Class<?> type = parameter.getType();
-            String defaultValue = param.defaultValue();
+            String defaultValue = "";
+            DefaultValue dfv = parameter.getAnnotation(DefaultValue.class);
+            if (dfv != null) {
+                defaultValue = dfv.value();
+            }
             String desc = param.desc();
             if (isPrimaryType(type)) {
-                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(position, name, type, desc, defaultValue);
-                r.add(ptpi);
+                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, defaultValue);
+                r.put(position, ptpi);
             } else {
-                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(position, name, type, desc);
-                this.analyseField(ctpi);
-                r.add(ctpi);
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc);
+                this.analyseField(type, ctpi);
+                r.put(position, ctpi);
             }
         }
         return r;
     }
 
-    public void analyseField(ComplexTypeParamInfo parent) {
-        Class clz = parent.getType();
+    /**
+     * 给定一个类，递归判断他的field以及每个field的@Param注解的信息
+     *
+     * @param clz
+     * @param parentObj
+     */
+    public void analyseField(Class clz, ComplexTypeParamInfo parentObj) {
         List<Field> fields = ClassUtils.getDeclaredFields(clz);
         for (Field f : fields) {
             Param param = ClassUtils.getAnnotation(f, Param.class);
             if (param == null) {
                 continue;
             }
+            String defaultValue = "";
+            DefaultValue dfv = ClassUtils.getAnnotation(f, DefaultValue.class);
+            if (dfv != null) {
+                defaultValue = dfv.value();
+            }
             Class fieldClz = f.getType();
             String name = param.value();
             String desc = param.desc();
-            String defaultValue = param.defaultValue();
+
             //如果字段是基础类型
             if (isPrimaryType(fieldClz)) {
-                ComplexTypeFieldInfo fieldInfo = new ComplexTypeFieldInfo(name, fieldClz, desc, defaultValue);
+                PrimaryTypeParamInfo fieldInfo = new PrimaryTypeParamInfo(name, fieldClz, desc, defaultValue);
+                parentObj.addField(fieldInfo);
+            } else {
+                //如果是符合的类型，那么递归调用
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, fieldClz, desc);
+                analyseField(fieldClz, ctpi);
+                parentObj.addField(ctpi);
             }
         }
 

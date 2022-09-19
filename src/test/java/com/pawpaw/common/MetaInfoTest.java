@@ -1,14 +1,15 @@
 package com.pawpaw.common;
 
 import com.pawpaw.common.json.JsonUtil;
-import com.pawpaw.common.meta.AbstractParamInfo;
+import com.pawpaw.common.meta.DefaultValue;
 import com.pawpaw.common.meta.MetaInfo;
 import com.pawpaw.common.meta.Param;
+import com.pawpaw.common.meta.ParamInfo;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
+import java.util.Map;
 
 public class MetaInfoTest {
 
@@ -27,10 +28,10 @@ public class MetaInfoTest {
 
 
     @Test
-    public void getParamInfo() throws NoSuchMethodException {
-        List<AbstractParamInfo> params = mi.getParamInfos();
-        for (AbstractParamInfo pi : params) {
-            System.out.println(pi);
+    public void getParamInfoMap() throws NoSuchMethodException {
+        Map<Integer, ParamInfo> params = mi.getParamInfoMap();
+        for (int i = 0; i < params.size(); i++) {
+            System.out.println(params.get(i));
         }
     }
 
@@ -50,7 +51,8 @@ public class MetaInfoTest {
 
 
 class Father {
-    @Param(value = "age", defaultValue = "40")
+    @Param(value = "age")
+    @DefaultValue("40")
     private int age;
     @Param("name")
     private String name;

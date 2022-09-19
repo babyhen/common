@@ -11,7 +11,7 @@ public class PrimaryTypeParamInfo extends ParamInfo {
 
     private final String defaultValue;
 
-    public PrimaryTypeParamInfo(int position, String name, Class type, String desc, String defaultValue) {
+    public PrimaryTypeParamInfo(String name, Class type, String desc, String defaultValue) {
         super(name, type, desc);
         this.defaultValue = defaultValue;
     }
