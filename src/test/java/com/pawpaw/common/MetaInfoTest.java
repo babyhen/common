@@ -67,7 +67,7 @@ public class MetaInfoTest {
         //
         for (AbstractParamInfo pi : allFields) {
             pi.getParentChain().forEach(e -> {
-                System.out.print(e.getType() + "  ");
+                System.out.print(e.getName()+"->"+e.getType() + "  ");
             });
             System.out.println("****");
         }
