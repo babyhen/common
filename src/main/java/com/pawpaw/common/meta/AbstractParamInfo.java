@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public abstract class AbstractParamInfo {
     protected final String name;
     protected final Class type;
     protected final String desc;
+    @ToString.Exclude
+    protected final AbstractParamInfo parent;
 
     /**
      * @return
@@ -30,6 +33,23 @@ public abstract class AbstractParamInfo {
      * @return
      */
     public abstract List<AbstractParamInfo> getFields();
+
+    /**
+     * 得到当前这个对象的 parent引用链
+     *
+     * @return
+     */
+    public List<AbstractParamInfo> getParentChain() {
+        List<AbstractParamInfo> r = new LinkedList<>();
+        AbstractParamInfo curr = this;
+        while (curr.parent != null) {
+            r.add(curr.parent);
+            curr = curr.parent;
+        }
+        //重新按照由上往下的顺序排列
+        Collections.reverse(r);
+        return r;
+    }
 
     /**
      * 递归得到当前对象下的所有的带注解的最终field

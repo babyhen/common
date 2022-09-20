@@ -13,8 +13,8 @@ public class PrimaryTypeParamInfo extends AbstractParamInfo {
 
     private final String defaultValue;
 
-    public PrimaryTypeParamInfo(String name, Class type, String desc, String defaultValue) {
-        super(name, type, desc);
+    public PrimaryTypeParamInfo(String name, Class type, String desc, String defaultValue, AbstractParamInfo parent) {
+        super(name, type, desc, parent);
         this.defaultValue = defaultValue;
     }
 
