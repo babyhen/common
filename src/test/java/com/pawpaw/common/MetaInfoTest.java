@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.Map;
 
 public class MetaInfoTest {
@@ -45,6 +46,17 @@ public class MetaInfoTest {
         Object[] allArg = mi.deserializeconstructArgs(rawJson);
         for (Object o : allArg) {
             System.out.println(o);
+        }
+    }
+
+    @Test
+    public void getRecursionPrimaryFields() throws Exception {
+        Father f = new Father(34, "刘继新");
+        Son son = new Son(f, 3, "刘绰");
+        List<AbstractParamInfo> list = mi.getParamInfoList();
+        for (AbstractParamInfo pi : list) {
+            List<AbstractParamInfo> fields = pi.getRecursionPrimaryFields();
+            System.out.println(fields);
         }
     }
 }

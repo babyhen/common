@@ -49,6 +49,16 @@ public class MetaInfo<T> {
     }
 
     /**
+     *
+     * @return
+     */
+    public List<AbstractParamInfo> getParamInfoList() {
+        List<AbstractParamInfo> r = new LinkedList<>();
+        r.addAll(this.paramInfoMap.values());
+        return r;
+    }
+
+    /**
      * 根据提供的参数和元信息。反序列化构造函数的参数值
      * 方法的参数上可能没有@Param注解。没有的地方需要填上null
      *
