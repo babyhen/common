@@ -1,6 +1,5 @@
 package com.pawpaw.common.meta;
 
-import com.fasterxml.jackson.databind.util.ClassUtil;
 import com.pawpaw.common.json.JsonUtil;
 import com.pawpaw.common.util.ClassUtils;
 import lombok.Getter;
@@ -11,7 +10,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * 构造方法的元数据信息
@@ -24,7 +22,7 @@ public class MetaInfo<T> {
     private final Class<? extends T> aClass;
     private final Constructor<? extends T> constructor;
     //key：参数在方法的位置， value：参数的信息
-    private final Map<Integer, ParamInfo> paramInfoMap;
+    private final Map<Integer, AbstractParamInfo> paramInfoMap;
     private final ConcurrentHashMap extraInfo;
 
 
@@ -64,7 +62,7 @@ public class MetaInfo<T> {
         // 如果有。则根据参数名字从提供的json字符串中搜索对应的值
         //如果没有则设置成null
         for (int position = 0; position < realParam.length; position++) {
-            ParamInfo pi = this.paramInfoMap.get(position);
+            AbstractParamInfo pi = this.paramInfoMap.get(position);
             if (pi == null) {
                 r[position] = null;
                 continue;
@@ -86,8 +84,8 @@ public class MetaInfo<T> {
      *
      * @return
      */
-    private Map<Integer, ParamInfo> analyseParamInfo(Parameter[] parameters) {
-        Map<Integer, ParamInfo> r = new HashMap<>();
+    private Map<Integer, AbstractParamInfo> analyseParamInfo(Parameter[] parameters) {
+        Map<Integer, AbstractParamInfo> r = new HashMap<>();
         Set<String> existName = new HashSet<>();
         for (int position = 0; position < parameters.length; position++) {
             Parameter parameter = parameters[position];
@@ -159,11 +157,11 @@ public class MetaInfo<T> {
 
     }
 
-    private Map<Integer, ParamInfo> analyseParamInfo(Method method) {
+    private Map<Integer, AbstractParamInfo> analyseParamInfo(Method method) {
         return this.analyseParamInfo(method.getParameters());
     }
 
-    private <T> Map<Integer, ParamInfo> analyseParamInfo(Constructor<T> constructor) {
+    private <T> Map<Integer, AbstractParamInfo> analyseParamInfo(Constructor<T> constructor) {
         return this.analyseParamInfo(constructor.getParameters());
     }
 

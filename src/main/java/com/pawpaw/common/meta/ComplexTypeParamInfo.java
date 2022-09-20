@@ -10,18 +10,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * 复合的数据类型对应的类
  */
-@Getter
-@ToString(callSuper = true)
-public class ComplexTypeParamInfo extends ParamInfo {
 
-    private List<ParamInfo> fields;
+@ToString(callSuper = true)
+public class ComplexTypeParamInfo extends AbstractParamInfo {
+
+    private List<AbstractParamInfo> fields;
 
     public ComplexTypeParamInfo(String name, Class type, String desc) {
         super(name, type, desc);
         this.fields = new CopyOnWriteArrayList<>();
     }
 
-    public void addField(ParamInfo field) {
+    public void addField(AbstractParamInfo field) {
         this.fields.add(field);
+    }
+
+    @Override
+    public String getDefaultValue() {
+        return "";
+    }
+
+    @Override
+    public List<AbstractParamInfo> getFields() {
+        return this.fields;
     }
 }

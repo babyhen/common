@@ -1,10 +1,10 @@
 package com.pawpaw.common;
 
 import com.pawpaw.common.json.JsonUtil;
+import com.pawpaw.common.meta.AbstractParamInfo;
 import com.pawpaw.common.meta.DefaultValue;
 import com.pawpaw.common.meta.MetaInfo;
 import com.pawpaw.common.meta.Param;
-import com.pawpaw.common.meta.ParamInfo;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class MetaInfoTest {
 
     @Test
     public void getParamInfoMap() throws NoSuchMethodException {
-        Map<Integer, ParamInfo> params = mi.getParamInfoMap();
+        Map<Integer, AbstractParamInfo> params = mi.getParamInfoMap();
         for (int i = 0; i < params.size(); i++) {
             System.out.println(params.get(i));
         }
@@ -50,7 +50,6 @@ public class MetaInfoTest {
 }
 
 
-
 class Grandpa {
     @Param(value = "age")
     @DefaultValue("80")
@@ -69,7 +68,6 @@ class Grandpa {
 }
 
 
-
 class Father {
     @Param(value = "age")
     @DefaultValue("40")
@@ -78,7 +76,7 @@ class Father {
     private String name;
 
     @Param("grandpa")
-    private  Grandpa grandpa;
+    private Grandpa grandpa;
 
     public Father(int age, String name) {
         this.age = age;
