@@ -22,6 +22,11 @@ public class PrimaryTypeParamInfo extends AbstractParamInfo {
     }
 
     @Override
+    public AbstractParamInfo getField(String name) {
+        return null;
+    }
+
+    @Override
     public void check() {
         //no operation
     }

@@ -1,11 +1,9 @@
 package com.pawpaw.common.meta;
 
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -37,6 +35,16 @@ public class ComplexTypeParamInfo extends AbstractParamInfo {
     }
 
     @Override
+    public AbstractParamInfo getField(String name) {
+        for (AbstractParamInfo pi : this.fields) {
+            if (StringUtils.equalsIgnoreCase(pi.name, name)) {
+                return pi;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void check() {
         //所有的field不能重名
         Set<String> existNames = new HashSet<>();
@@ -46,6 +54,24 @@ public class ComplexTypeParamInfo extends AbstractParamInfo {
             }
             existNames.add(pi.name);
         }
-
+        //如果带有DefaultValue(s)的注解，那么设置的路径应该是正确可达的;
+        List<DefaultValue> allDFVConfig = this.allDefaultValueConfig();
+        allDFVConfig.forEach(dv -> {
+            String specifiedPath = dv.path();
+            List<String> separatedPath = com.pawpaw.common.util.StringUtils.split(specifiedPath, PATH_SEPARATOR);
+            //循环一层一层检查是否存在对应名字的字段
+            AbstractParamInfo curr = this;
+            for (String segment : separatedPath) {
+                AbstractParamInfo isExist = curr.getField(segment);
+                if (isExist == null) {
+                    throw new MetaException("sub child \"" + segment + "\" is missing !");
+                }
+                curr = isExist;
+            }
+        });
+        //子字段依次进行检查
+        for (AbstractParamInfo field : this.fields) {
+            field.check();
+        }
     }
 }

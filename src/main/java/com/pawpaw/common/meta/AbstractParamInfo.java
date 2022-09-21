@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 public abstract class AbstractParamInfo {
-
+    public static final String PATH_SEPARATOR = ".";
     protected final String name;
     protected final Class type;
     protected final String desc;
@@ -38,9 +38,34 @@ public abstract class AbstractParamInfo {
     public abstract List<AbstractParamInfo> getFields();
 
     /**
+     * 根据名字获得单个的子成员
+     *
+     * @param name
+     * @return
+     */
+    public abstract AbstractParamInfo getField(String name);
+
+    /**
      * 检查相关的信息是否合法
      */
     public abstract void check();
+
+    /**
+     * 返回所有设置的默认值的配置列表，包括 @DefaultValue(s)
+     *
+     * @return
+     */
+    public List<DefaultValue> allDefaultValueConfig() {
+        List<DefaultValue> allDefaultValue = new LinkedList<>();
+        if (this.defaultValueAnnotation != null) {
+            allDefaultValue.add(this.defaultValueAnnotation);
+        }
+        if (this.defaultValues != null) {
+            allDefaultValue.addAll(Arrays.asList(defaultValues.value()));
+        }
+        return allDefaultValue;
+    }
+
 
     /**
      * 得到这个字段的默认值
@@ -54,21 +79,13 @@ public abstract class AbstractParamInfo {
         while (!parents.isEmpty()) {
             AbstractParamInfo curr = parents.get(0);
             //把所有默认值的注解都找出来
-            DefaultValue dfv = curr.getDefaultValueAnnotation();
-            DefaultValues dfvs = curr.getDefaultValues();
-            List<DefaultValue> allDefaultValue = new LinkedList<>();
-            if (dfv != null) {
-                allDefaultValue.add(dfv);
-            }
-            if (dfvs != null) {
-                allDefaultValue.addAll(Arrays.asList(dfvs.value()));
-            }
+            List<DefaultValue> allDefaultValue = curr.allDefaultValueConfig();
             //计算好目标要匹配的path
             List<String> path = parents.stream().map(AbstractParamInfo::getName).collect(Collectors.toList());
             //去掉父节点当前的名字,并且加上自己的名字
             path.remove(0);
             path.add(this.name);
-            String toMatchPath = StringUtils.join(path, ".");
+            String toMatchPath = StringUtils.join(path, PATH_SEPARATOR);
             //遍历所有的指定的设置，如果满足，则直接返回了。
             for (DefaultValue tmpDV : allDefaultValue) {
                 String specifiedPath = tmpDV.path();

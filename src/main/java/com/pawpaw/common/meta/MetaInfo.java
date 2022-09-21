@@ -114,7 +114,8 @@ public class MetaInfo<T> {
      */
     private Map<Integer, AbstractParamInfo> analyseParamInfo(Parameter[] parameters) {
         Map<Integer, AbstractParamInfo> r = new HashMap<>();
-        Set<String> existName = new HashSet<>();
+        ComplexTypeParamInfo rootParamInfo = new ComplexTypeParamInfo("root", this.aClass, "", null, null, null);
+        //遍历方法上的参数.
         for (int position = 0; position < parameters.length; position++) {
             Parameter parameter = parameters[position];
             Param param = parameter.getAnnotation(Param.class);
@@ -129,31 +130,21 @@ public class MetaInfo<T> {
             DefaultValues dfvs = parameter.getAnnotation(DefaultValues.class);
             String desc = param.desc();
             if (isPrimaryType(type)) {
-                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, null, dfv, dfvs);
+                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, rootParamInfo, dfv, dfvs);
                 r.put(position, ptpi);
             } else {
-                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, null, dfv, dfvs);
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, rootParamInfo, dfv, dfvs);
                 this.analyseField(type, ctpi);
                 r.put(position, ctpi);
             }
         }
         //
-        this.checkParamInfo(r);
+        rootParamInfo.addField(r.values());
+        rootParamInfo.check();
         //
         return r;
     }
 
-    /**
-     * 检查元数据的合法性
-     *
-     * @param map
-     */
-    private void checkParamInfo(Map<Integer, AbstractParamInfo> map) {
-        //构造一个临时的对象来把所有的条件组合起来
-        ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo("tmpForCheck", this.aClass, "", null, null, null);
-        ctpi.addField(map.values());
-        ctpi.check();
-    }
 
     /**
      * 给定一个类，递归判断他的field以及每个field的@Param注解的信息

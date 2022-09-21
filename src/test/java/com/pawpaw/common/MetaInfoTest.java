@@ -117,7 +117,7 @@ class Son {
     private int age;
     private String name;
 
-    public Son( @DefaultValue(path="fatherAge",value = "50")  @Param("father") Father father,
+    public Son( @DefaultValue(path="grandpa.grandpaAge",value = "150")  @Param("father") Father father,
                @Param("age") int age,
                @Param("name") String name) {
         this.father = father;
