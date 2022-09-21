@@ -29,9 +29,10 @@ public class MetaInfo<T> {
     public MetaInfo(Constructor<? extends T> constructor) {
         this.aClass = constructor.getDeclaringClass();
         this.constructor = constructor;
-        //不可改变的list。防止被而已篡改里面的元素
-        this.paramInfoMap = Collections.unmodifiableMap(this.analyseParamInfo(this.constructor));
         this.extraInfo = new ConcurrentHashMap();
+        //不可改变的list。防止被而已篡改里面的元素
+        Map<Integer, AbstractParamInfo> analysedParamInfo = this.analyseParamInfo(this.constructor);
+        this.paramInfoMap = Collections.unmodifiableMap(analysedParamInfo);
     }
 
     public void addExtra(Object key, Object value) {
@@ -121,13 +122,8 @@ public class MetaInfo<T> {
             if (param == null) {
                 continue;
             }
-            String name = param.value();
-            //检查参数名唯一性
-            if (existName.contains(name)) {
-                throw new MetaException("param \"" + name + "\" already exist!");
-            }
-            existName.add(name);
             //构造对应的对象，并加入到返回的列表里面
+            String name = param.value();
             Class<?> type = parameter.getType();
             DefaultValue dfv = parameter.getAnnotation(DefaultValue.class);
             DefaultValues dfvs = parameter.getAnnotation(DefaultValues.class);
@@ -141,7 +137,22 @@ public class MetaInfo<T> {
                 r.put(position, ctpi);
             }
         }
+        //
+        this.checkParamInfo(r);
+        //
         return r;
+    }
+
+    /**
+     * 检查元数据的合法性
+     *
+     * @param map
+     */
+    private void checkParamInfo(Map<Integer, AbstractParamInfo> map) {
+        //构造一个临时的对象来把所有的条件组合起来
+        ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo("tmpForCheck", this.aClass, "", null, null, null);
+        ctpi.addField(map.values());
+        ctpi.check();
     }
 
     /**

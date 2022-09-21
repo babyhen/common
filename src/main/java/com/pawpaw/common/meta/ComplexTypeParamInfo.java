@@ -2,7 +2,10 @@ package com.pawpaw.common.meta;
 
 import lombok.ToString;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -23,9 +26,26 @@ public class ComplexTypeParamInfo extends AbstractParamInfo {
         this.fields.add(field);
     }
 
+    public void addField(Collection<AbstractParamInfo> fields) {
+        this.fields.addAll(fields);
+    }
+
 
     @Override
     public List<AbstractParamInfo> getFields() {
         return this.fields;
+    }
+
+    @Override
+    public void check() {
+        //所有的field不能重名
+        Set<String> existNames = new HashSet<>();
+        for (AbstractParamInfo pi : this.fields) {
+            if (existNames.contains(pi.name)) {
+                throw new MetaException("name \"" + pi.name + "\" already exist !");
+            }
+            existNames.add(pi.name);
+        }
+
     }
 }

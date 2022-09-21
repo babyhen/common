@@ -20,4 +20,9 @@ public class PrimaryTypeParamInfo extends AbstractParamInfo {
     public List<AbstractParamInfo> getFields() {
         return Collections.emptyList();
     }
+
+    @Override
+    public void check() {
+        //no operation
+    }
 }

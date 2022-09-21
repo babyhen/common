@@ -31,6 +31,18 @@ public abstract class AbstractParamInfo {
     protected final DefaultValues defaultValues;
 
     /**
+     * 得到直接的下一级带注解的field
+     *
+     * @return
+     */
+    public abstract List<AbstractParamInfo> getFields();
+
+    /**
+     * 检查相关的信息是否合法
+     */
+    public abstract void check();
+
+    /**
      * 得到这个字段的默认值
      * 从父节点依次往下查找，找到设置的默认值
      *
@@ -78,12 +90,6 @@ public abstract class AbstractParamInfo {
         return "";
     }
 
-    /**
-     * 得到直接的下一级带注解的field
-     *
-     * @return
-     */
-    public abstract List<AbstractParamInfo> getFields();
 
     /**
      * 得到当前这个对象的 parent引用链（由上往下的引用，即   grandpa->father->son）
