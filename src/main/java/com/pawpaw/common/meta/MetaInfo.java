@@ -130,13 +130,13 @@ public class MetaInfo<T> {
             //构造对应的对象，并加入到返回的列表里面
             Class<?> type = parameter.getType();
             DefaultValue dfv = parameter.getAnnotation(DefaultValue.class);
-
+            DefaultValues dfvs = parameter.getAnnotation(DefaultValues.class);
             String desc = param.desc();
             if (isPrimaryType(type)) {
-                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, null, dfv);
+                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, null, dfv, dfvs);
                 r.put(position, ptpi);
             } else {
-                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, null, dfv);
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, null, dfv, dfvs);
                 this.analyseField(type, ctpi);
                 r.put(position, ctpi);
             }
@@ -158,17 +158,18 @@ public class MetaInfo<T> {
                 continue;
             }
             DefaultValue dfv = ClassUtils.getAnnotation(f, DefaultValue.class);
+            DefaultValues dfvs = ClassUtils.getAnnotation(f, DefaultValues.class);
             Class fieldClz = f.getType();
             String name = param.value();
             String desc = param.desc();
 
             //如果字段是基础类型
             if (isPrimaryType(fieldClz)) {
-                PrimaryTypeParamInfo fieldInfo = new PrimaryTypeParamInfo(name, fieldClz, desc, parentObj, dfv);
+                PrimaryTypeParamInfo fieldInfo = new PrimaryTypeParamInfo(name, fieldClz, desc, parentObj, dfv, dfvs);
                 parentObj.addField(fieldInfo);
             } else {
                 //如果是符合的类型，那么递归调用
-                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, fieldClz, desc, parentObj, dfv);
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, fieldClz, desc, parentObj, dfv, dfvs);
                 analyseField(fieldClz, ctpi);
                 parentObj.addField(ctpi);
             }

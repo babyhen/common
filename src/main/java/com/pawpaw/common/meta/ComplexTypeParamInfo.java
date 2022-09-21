@@ -14,8 +14,8 @@ public class ComplexTypeParamInfo extends AbstractParamInfo {
 
     private List<AbstractParamInfo> fields;
 
-    public ComplexTypeParamInfo(String name, Class type, String desc, AbstractParamInfo parent, DefaultValue dfv) {
-        super(name, type, desc, parent, dfv);
+    public ComplexTypeParamInfo(String name, Class type, String desc, AbstractParamInfo parent, DefaultValue dfv, DefaultValues dfvs) {
+        super(name, type, desc, parent, dfv, dfvs);
         this.fields = new CopyOnWriteArrayList<>();
     }
 

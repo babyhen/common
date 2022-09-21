@@ -1,10 +1,7 @@
 package com.pawpaw.common;
 
 import com.pawpaw.common.json.JsonUtil;
-import com.pawpaw.common.meta.AbstractParamInfo;
-import com.pawpaw.common.meta.DefaultValue;
-import com.pawpaw.common.meta.MetaInfo;
-import com.pawpaw.common.meta.Param;
+import com.pawpaw.common.meta.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -56,7 +53,7 @@ public class MetaInfoTest {
     public void getRecursionPrimaryFields() throws Exception {
         List<AbstractParamInfo> list = mi.getRecursionPrimaryFields();
         for (AbstractParamInfo pi : list) {
-            System.out.println(pi.getName()+pi.getDefaultValue());
+            System.out.println(pi.getName() + pi.getDefaultValue());
         }
     }
 
@@ -100,7 +97,8 @@ class Father {
     @Param("fatherName")
     private String name;
 
-    @DefaultValue(value = "90", path = "grandpaAge")
+    //  @DefaultValue(value = "90", path = "grandpaAge")
+    @DefaultValues({@DefaultValue(value = "90", path = "grandpaAge"), @DefaultValue(value = "赵凤芹", path = "grandpaName"),})
     @Param("grandpa")
     private Grandpa grandpa;
 
@@ -119,7 +117,7 @@ class Son {
     private int age;
     private String name;
 
-    public Son(@Param("father") Father father,
+    public Son( @DefaultValue(path="fatherAge",value = "50")  @Param("father") Father father,
                @Param("age") int age,
                @Param("name") String name) {
         this.father = father;

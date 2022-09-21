@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,8 @@ public abstract class AbstractParamInfo {
     protected final AbstractParamInfo parent;
     @Nullable
     protected final DefaultValue defaultValueAnnotation;
-
+    @Nullable
+    protected final DefaultValues defaultValues;
 
     /**
      * 得到这个字段的默认值
@@ -39,19 +41,32 @@ public abstract class AbstractParamInfo {
         //从最顶级的节点开始查找，有没有设置（重写）该对象的默认值，如果有。那么则获取该值，然后返回
         while (!parents.isEmpty()) {
             AbstractParamInfo curr = parents.get(0);
+            //把所有默认值的注解都找出来
             DefaultValue dfv = curr.getDefaultValueAnnotation();
+            DefaultValues dfvs = curr.getDefaultValues();
+            List<DefaultValue> allDefaultValue = new LinkedList<>();
             if (dfv != null) {
-                List<String> path = parents.stream().map(AbstractParamInfo::getName).collect(Collectors.toList());
-                //去掉父节点当前的名字,并且加上自己的名字
-                path.remove(0);
-                path.add(this.name);
-                String toMatchPath = StringUtils.join(path, ".");
-                String specifiedPath = dfv.path();
+                allDefaultValue.add(dfv);
+            }
+            if (dfvs != null) {
+                allDefaultValue.addAll(Arrays.asList(dfvs.value()));
+            }
+            //计算好目标要匹配的path
+            List<String> path = parents.stream().map(AbstractParamInfo::getName).collect(Collectors.toList());
+            //去掉父节点当前的名字,并且加上自己的名字
+            path.remove(0);
+            path.add(this.name);
+            String toMatchPath = StringUtils.join(path, ".");
+            //遍历所有的指定的设置，如果满足，则直接返回了。
+            for (DefaultValue tmpDV : allDefaultValue) {
+                String specifiedPath = tmpDV.path();
                 if (StringUtils.equalsIgnoreCase(specifiedPath, toMatchPath)) {
                     //找到了，则返回该值
-                    return dfv.value();
+                    return tmpDV.value();
                 }
             }
+
+
             //把第一个节点删掉，从下一级继续
             parents.remove(0);
         }
