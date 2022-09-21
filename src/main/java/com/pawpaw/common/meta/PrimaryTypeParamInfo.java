@@ -11,19 +11,9 @@ import java.util.List;
 @ToString(callSuper = true)
 public class PrimaryTypeParamInfo extends AbstractParamInfo {
 
-    private final String defaultValue;
 
-    public PrimaryTypeParamInfo(String name, Class type, String desc, String defaultValue, AbstractParamInfo parent) {
-        super(name, type, desc, parent);
-        this.defaultValue = defaultValue;
-    }
-
-    @Override
-    public String getDefaultValue() {
-        if (this.defaultValue == null) {
-            return "";
-        }
-        return this.defaultValue;
+    public PrimaryTypeParamInfo(String name, Class type, String desc, AbstractParamInfo parent, DefaultValue dfv) {
+        super(name, type, desc, parent, dfv);
     }
 
     @Override

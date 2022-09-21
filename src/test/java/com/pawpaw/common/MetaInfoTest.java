@@ -54,10 +54,9 @@ public class MetaInfoTest {
 
     @Test
     public void getRecursionPrimaryFields() throws Exception {
-        List<AbstractParamInfo> list = mi.getParamInfoList();
+        List<AbstractParamInfo> list = mi.getRecursionPrimaryFields();
         for (AbstractParamInfo pi : list) {
-            List<AbstractParamInfo> fields = pi.getRecursionPrimaryFields();
-            System.out.println(fields);
+            System.out.println(pi.getName()+pi.getDefaultValue());
         }
     }
 
@@ -67,7 +66,7 @@ public class MetaInfoTest {
         //
         for (AbstractParamInfo pi : allFields) {
             pi.getParentChain().forEach(e -> {
-                System.out.print(e.getName()+"->"+e.getType() + "  ");
+                System.out.print(e.getName() + "->" + e.getType() + "  ");
             });
             System.out.println("****");
         }
@@ -77,12 +76,12 @@ public class MetaInfoTest {
 
 
 class Grandpa {
-    @Param(value = "age")
+    @Param(value = "grandpaAge")
     @DefaultValue("80")
     private int age;
 
     @DefaultValue("刘德旺")
-    @Param("name")
+    @Param("grandpaName")
     private String name;
 
     public Grandpa(int age, String name) {
@@ -95,12 +94,13 @@ class Grandpa {
 
 
 class Father {
-    @Param(value = "age")
+    @Param(value = "fatherAge")
     @DefaultValue("40")
     private int age;
-    @Param("name")
+    @Param("fatherName")
     private String name;
 
+    @DefaultValue(value = "90", path = "grandpaAge")
     @Param("grandpa")
     private Grandpa grandpa;
 

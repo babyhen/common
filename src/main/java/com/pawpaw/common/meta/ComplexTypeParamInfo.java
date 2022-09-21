@@ -1,7 +1,5 @@
 package com.pawpaw.common.meta;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
@@ -16,8 +14,8 @@ public class ComplexTypeParamInfo extends AbstractParamInfo {
 
     private List<AbstractParamInfo> fields;
 
-    public ComplexTypeParamInfo(String name, Class type, String desc,AbstractParamInfo parent) {
-        super(name, type, desc,parent);
+    public ComplexTypeParamInfo(String name, Class type, String desc, AbstractParamInfo parent, DefaultValue dfv) {
+        super(name, type, desc, parent, dfv);
         this.fields = new CopyOnWriteArrayList<>();
     }
 
@@ -25,10 +23,6 @@ public class ComplexTypeParamInfo extends AbstractParamInfo {
         this.fields.add(field);
     }
 
-    @Override
-    public String getDefaultValue() {
-        return "";
-    }
 
     @Override
     public List<AbstractParamInfo> getFields() {

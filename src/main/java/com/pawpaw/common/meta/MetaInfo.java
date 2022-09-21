@@ -129,17 +129,14 @@ public class MetaInfo<T> {
             existName.add(name);
             //构造对应的对象，并加入到返回的列表里面
             Class<?> type = parameter.getType();
-            String defaultValue = "";
             DefaultValue dfv = parameter.getAnnotation(DefaultValue.class);
-            if (dfv != null) {
-                defaultValue = dfv.value();
-            }
+
             String desc = param.desc();
             if (isPrimaryType(type)) {
-                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, defaultValue, null);
+                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, null, dfv);
                 r.put(position, ptpi);
             } else {
-                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, null);
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, null, dfv);
                 this.analyseField(type, ctpi);
                 r.put(position, ctpi);
             }
@@ -160,22 +157,18 @@ public class MetaInfo<T> {
             if (param == null) {
                 continue;
             }
-            String defaultValue = "";
             DefaultValue dfv = ClassUtils.getAnnotation(f, DefaultValue.class);
-            if (dfv != null) {
-                defaultValue = dfv.value();
-            }
             Class fieldClz = f.getType();
             String name = param.value();
             String desc = param.desc();
 
             //如果字段是基础类型
             if (isPrimaryType(fieldClz)) {
-                PrimaryTypeParamInfo fieldInfo = new PrimaryTypeParamInfo(name, fieldClz, desc, defaultValue, parentObj);
+                PrimaryTypeParamInfo fieldInfo = new PrimaryTypeParamInfo(name, fieldClz, desc, parentObj, dfv);
                 parentObj.addField(fieldInfo);
             } else {
                 //如果是符合的类型，那么递归调用
-                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, fieldClz, desc, parentObj);
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, fieldClz, desc, parentObj, dfv);
                 analyseField(fieldClz, ctpi);
                 parentObj.addField(ctpi);
             }
