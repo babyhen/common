@@ -1,6 +1,7 @@
 package com.pawpaw.common.meta;
 
 import com.pawpaw.common.json.JsonUtil;
+import com.pawpaw.common.util.AssertUtil;
 import com.pawpaw.common.util.ClassUtils;
 import lombok.Getter;
 
@@ -98,6 +99,7 @@ public class MetaInfo<T> {
             String paramName = pi.getName();
             Class type = pi.getType();
             Object value = JsonUtil.json2Object(jsonStr, paramName, type);
+            AssertUtil.notNull(value, "数据没有key:" + paramName);
             r[position] = value;
         }
         return r;
@@ -114,7 +116,6 @@ public class MetaInfo<T> {
      */
     private Map<Integer, AbstractParamInfo> analyseParamInfo(Parameter[] parameters) {
         Map<Integer, AbstractParamInfo> r = new HashMap<>();
-        ComplexTypeParamInfo rootParamInfo = new ComplexTypeParamInfo("root", this.aClass, "", null, null, null);
         //遍历方法上的参数.
         for (int position = 0; position < parameters.length; position++) {
             Parameter parameter = parameters[position];
@@ -130,15 +131,16 @@ public class MetaInfo<T> {
             DefaultValues dfvs = parameter.getAnnotation(DefaultValues.class);
             String desc = param.desc();
             if (isPrimaryType(type)) {
-                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, rootParamInfo, dfv, dfvs);
+                PrimaryTypeParamInfo ptpi = new PrimaryTypeParamInfo(name, type, desc, null, dfv, dfvs);
                 r.put(position, ptpi);
             } else {
-                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, rootParamInfo, dfv, dfvs);
+                ComplexTypeParamInfo ctpi = new ComplexTypeParamInfo(name, type, desc, null, dfv, dfvs);
                 this.analyseField(type, ctpi);
                 r.put(position, ctpi);
             }
         }
-        //
+        //为了触发check的操作。构造一个虚拟的root节点出来。
+        ComplexTypeParamInfo rootParamInfo = new ComplexTypeParamInfo("root", this.aClass, "", null, null, null);
         rootParamInfo.addField(r.values());
         rootParamInfo.check();
         //

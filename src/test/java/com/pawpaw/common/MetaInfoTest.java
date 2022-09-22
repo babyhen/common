@@ -2,6 +2,7 @@ package com.pawpaw.common;
 
 import com.pawpaw.common.json.JsonUtil;
 import com.pawpaw.common.meta.*;
+import lombok.ToString;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -90,6 +91,7 @@ class Grandpa {
 }
 
 
+@ToString
 class Father {
     @Param(value = "fatherAge")
     @DefaultValue("40")
