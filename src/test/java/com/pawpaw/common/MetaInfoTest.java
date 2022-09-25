@@ -14,6 +14,7 @@ import java.util.Map;
 public class MetaInfoTest {
 
     static MetaInfo mi;
+    static MetaInfo mi2;
     static Father f;
     static Son son;
 
@@ -26,6 +27,8 @@ public class MetaInfoTest {
         mi = new MetaInfo<>(constructor);
         f = new Father(34, "刘继新");
         son = new Son(f, 3, "刘绰");
+        //
+        mi2 = new MetaInfo(PrimaryConstructorObject.class);
 
     }
 
@@ -68,6 +71,12 @@ public class MetaInfoTest {
             });
             System.out.println("****");
         }
+    }
+
+
+    @Test
+    public void primaryConstructor() throws Exception {
+        System.out.println(mi2.getConstructor());
     }
 
 }
@@ -119,7 +128,7 @@ class Son {
     private int age;
     private String name;
 
-    public Son( @DefaultValue(path="grandpa.grandpaAge",value = "150")  @Param("father") Father father,
+    public Son(@DefaultValue(path = "grandpa.grandpaAge", value = "150") @Param("father") Father father,
                @Param("age") int age,
                @Param("name") String name) {
         this.father = father;
@@ -139,3 +148,16 @@ class Son {
 }
 
 
+class PrimaryConstructorObject {
+
+    @PrimaryConstructor
+    PrimaryConstructorObject(int a, int b) {
+
+    }
+
+    @PrimaryConstructor
+    PrimaryConstructorObject(int a) {
+
+    }
+
+}

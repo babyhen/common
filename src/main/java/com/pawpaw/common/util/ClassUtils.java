@@ -1,6 +1,8 @@
 package com.pawpaw.common.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +23,30 @@ public class ClassUtils {
     }
 
     /**
+     * 得到所有的构造函数
+     * @param clz
+     * @param <T>
+     * @return
+     */
+    public static <T> List<Constructor<T>> getAllConstructor(Class<T> clz) {
+        Constructor[] cs = clz.getDeclaredConstructors();
+        return Arrays.asList(cs);
+    }
+
+    /**
+     * 得到构造函数上指定的注解
+     *
+     * @param constructor
+     * @param annotationClass
+     * @param <T>
+     * @return
+     */
+    public static <T extends Annotation> T getAnnotation(Constructor constructor, Class<T> annotationClass) {
+        Annotation t = constructor.getAnnotation(annotationClass);
+        return (T) t;
+    }
+
+    /**
      * 返回该field的指定注解
      *
      * @param field
@@ -32,4 +58,6 @@ public class ClassUtils {
         T t = field.getAnnotation(annotation);
         return t;
     }
+
+
 }

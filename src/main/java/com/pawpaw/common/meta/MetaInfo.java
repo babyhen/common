@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 构造方法的元数据信息
@@ -26,7 +27,22 @@ public class MetaInfo<T> {
     private final Map<Integer, AbstractParamInfo> paramInfoMap;
     private final ConcurrentHashMap extraInfo;
 
+    /**
+     * 扫描指定的类上，带有PrimaryConstructor注解的构造函数
+     *
+     * @param clz
+     * @see PrimaryConstructor
+     */
+    public MetaInfo(Class clz) {
+        this(getPrimaryConstructor(clz));
+    }
 
+
+    /**
+     * 使用指定的构造函数初始化
+     *
+     * @param constructor
+     */
     public MetaInfo(Constructor<? extends T> constructor) {
         this.aClass = constructor.getDeclaringClass();
         this.constructor = constructor;
@@ -105,6 +121,23 @@ public class MetaInfo<T> {
         return r;
     }
 
+    /**
+     * 得到默认的构造函数
+     *
+     * @param clz
+     * @return
+     */
+    public static <T> Constructor<T> getPrimaryConstructor(Class<T> clz) {
+        List<Constructor<T>> constructors = ClassUtils.getAllConstructor(clz);
+        List<Constructor> primary = constructors.stream().filter(constructor -> {
+            PrimaryConstructor isExist = ClassUtils.getAnnotation(constructor, PrimaryConstructor.class);
+            return isExist != null;
+        }).collect(Collectors.toList());
+        //
+        AssertUtil.assertTrue(primary.size() > 0, "不存在默认的构造函数");
+        AssertUtil.assertTrue(primary.size() == 1, "只能有一个默认的构造函数");
+        return primary.get(0);
+    }
 
     /**  ************************  help method   ********************************************/
     /**  ********************************************************************/
