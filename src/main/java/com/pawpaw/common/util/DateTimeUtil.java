@@ -28,6 +28,9 @@ public class DateTimeUtil {
     public static DateTimeFormatter TIME_FORMAT_19 = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss")
             .toFormatter();
 
+    public static DateTimeFormatter TIME_FORMAT_16 = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm")
+            .toFormatter();
+
     public static DateTimeFormatter TIME_FORMAT_10 = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd")
             .toFormatter();
 

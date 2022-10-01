@@ -128,14 +128,15 @@ public class MetaInfo<T> {
      * @return
      */
     public static <T> Constructor<T> getPrimaryConstructor(Class<T> clz) {
+        String clzName=clz.getName();
         List<Constructor<T>> constructors = ClassUtils.getAllConstructor(clz);
         List<Constructor> primary = constructors.stream().filter(constructor -> {
             PrimaryConstructor isExist = ClassUtils.getAnnotation(constructor, PrimaryConstructor.class);
             return isExist != null;
         }).collect(Collectors.toList());
         //
-        AssertUtil.assertTrue(primary.size() > 0, "不存在默认的构造函数");
-        AssertUtil.assertTrue(primary.size() == 1, "只能有一个默认的构造函数");
+        AssertUtil.assertTrue(primary.size() > 0, clzName+"不存在默认的构造函数");
+        AssertUtil.assertTrue(primary.size() == 1, clzName+"只能有一个默认的构造函数");
         return primary.get(0);
     }
 
