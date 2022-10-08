@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class CollectionUtilTest {
     List<String> l = new LinkedList<>();
@@ -30,6 +31,18 @@ public class CollectionUtilTest {
     @Test
     public void subLast() throws JsonProcessingException {
         List<String> l2 = CollectionUtil.subLast(this.l, 4);
+        System.out.println(l2);
+    }
+
+
+    @Test
+    public void subFromFirstOccurrence() throws JsonProcessingException {
+        List<String> l2 = CollectionUtil.subFromFirstOccurrence(this.l, new Predicate<String>() {
+            @Override
+            public boolean test(String s) {
+                return s.equals("a");
+            }
+        });
         System.out.println(l2);
     }
 

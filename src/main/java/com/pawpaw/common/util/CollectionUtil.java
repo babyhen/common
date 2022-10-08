@@ -56,6 +56,28 @@ public class CollectionUtil {
         return source.subList(from, toIndex);
     }
 
+    /**
+     * 从第一个满足条件的位置开始往后截取
+     *
+     * @param source
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> subFromFirstOccurrence(List<T> source, Predicate<T> predicate) {
+        List<T> r = new LinkedList<>();
+        boolean isMatch = false;
+        for (T t : source) {
+            if (!isMatch) {
+                isMatch = predicate.test(t);
+            }
+            if (isMatch) {
+                r.add(t);
+            }
+
+        }
+        return r;
+    }
+
 
     public static <T> List<T> minus(List<T> source, Collection<T> toMinus) {
         List<T> copy = new ArrayList<>(source);
