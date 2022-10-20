@@ -2,8 +2,6 @@ package com.pawpaw.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,10 +30,23 @@ public class FileUtil {
             return;
         }
         if (file.isDirectory()) {
-            File[] childs = file.listFiles();
-            for (int i = 0; i < childs.length; i++) {
-                delFile(childs[i]);
-            }
+            delChildFile(file);
+        }
+
+    }
+
+    /**
+     * 清除文件夹下面的子文件.文件夹不清楚
+     *
+     * @param dir
+     */
+    public static void delChildFile(File dir) {
+        if (!dir.isDirectory()) {
+            throw new RuntimeException(dir.getAbsolutePath() + "不是文件夹");
+        }
+        File[] childs = dir.listFiles();
+        for (int i = 0; i < childs.length; i++) {
+            delFile(childs[i]);
         }
 
     }
