@@ -69,6 +69,10 @@ public class DateTimeUtil {
         return format(time, TIME_FORMAT_14);
     }
 
+    public static String format16(Date time) {
+        return format(time, TIME_FORMAT_16);
+    }
+
     public static String format8(Date time) {
         return format(time, TIME_FORMAT_8);
     }
