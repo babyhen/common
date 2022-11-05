@@ -1,9 +1,6 @@
 package com.pawpaw.common.util;
 
-import com.pawpaw.common.sort.Sorter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -76,6 +73,16 @@ public class CollectionUtil {
 
         }
         return r;
+    }
+
+    public static <T> T findFirstMatch(List<T> source, Predicate<T> predicate) {
+        for (T t : source) {
+            if (predicate.test(t)) {
+                return t;
+            }
+
+        }
+        return null;
     }
 
 
