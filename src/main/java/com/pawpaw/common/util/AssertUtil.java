@@ -88,6 +88,25 @@ public class AssertUtil {
     }
 
     /**
+     * @param target
+     * @param min
+     * @param max
+     */
+    public static void assertRange(float target, float min, float max) {
+        assertRange(target, min, max, "需要在" + min + "--" + max + "之间");
+    }
+
+    /**
+     * @param target
+     * @param min
+     * @param max
+     * @param exceptionMessage
+     */
+    public static void assertRange(float target, float min, float max, String exceptionMessage) {
+        assertTrue(target >= min && target <= max, exceptionMessage);
+    }
+
+    /**
      * @param expression
      * @param exceptionMessage
      */
