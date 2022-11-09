@@ -85,6 +85,16 @@ public class CollectionUtil {
         return null;
     }
 
+    public static <T> T findFirstNotMatch(List<T> source, Predicate<T> predicate) {
+        for (T t : source) {
+            if (!predicate.test(t)) {
+                return t;
+            }
+
+        }
+        return null;
+    }
+
 
     public static <T> List<T> minus(List<T> source, Collection<T> toMinus) {
         List<T> copy = new ArrayList<>(source);
