@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class CollectionUtilTest {
@@ -58,6 +59,31 @@ public class CollectionUtilTest {
     public void toArray() throws JsonProcessingException {
         String[] a = CollectionUtil.toArray(this.l, String.class);
         System.out.println(a[0]);
+    }
+
+    @Test
+    public void getFirstContinuousPiCi() {
+        List<Integer> a = new LinkedList<>();
+        a.add(1);
+        a.add(2);
+        a.add(3);
+        a.add(4);
+        a.add(5);
+        a.add(6);
+        a.add(7);
+        a.add(8);
+        a.add(9);
+        a.add(1);
+        a.add(2);
+        a.add(3);
+        Predicate<Integer> p = new Predicate<Integer>() {
+            @Override
+            public boolean test(Integer o) {
+                return o >= 0&&o<3;
+            }
+        };
+        Optional r = CollectionUtil.getFirstContinuousPiCi(a, p, 2);
+        System.out.println(r);
     }
 
 
